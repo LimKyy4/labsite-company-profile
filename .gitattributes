@@ -1,0 +1,15 @@
+# Normalize line endings across platforms.
+# Text files are committed with LF and checked out with LF, so a Windows
+# contributor and a Linux/macOS contributor see identical diffs and no
+# whole-file churn. Binary files are detected automatically and left alone.
+* text=auto eol=lf
+
+# Keep these as LF explicitly even if a future .gitattributes edit broadens.
+*.css   text eol=lf
+*.html  text eol=lf
+*.js    text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+*.svg   text eol=lf
+*.ts    text eol=lf
+*.tsx   text eol=lf

@@ -1,0 +1,45 @@
+# Large source document (15 MB) — kept locally, out of git history.
+# Scoped to this file on purpose; a blanket *.pdf would block future assets.
+/COMPANY PROFILE - LABSITE.ID.pdf
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment / secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Test / coverage
+coverage/
+*.lcov
+
+# Editor & OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Vite / tooling caches
+.vite/
+.cache/
+.eslintcache
