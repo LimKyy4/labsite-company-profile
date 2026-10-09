@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, Moon, Sun, X } from 'lucide-react';
-import { brand, navLinks } from '../data/companyData';
+import { ArrowRight, Menu, Moon, Sun, X } from 'lucide-react';
+import { brand, navLinks, systemStatus } from '../data/companyData';
 import { useTheme } from '../context/ThemeContext';
 import { useHeaderScroll, useLockBodyScroll, useScrollSpy } from '../hooks';
 import { EDITORIAL, SPRING } from './ui';
@@ -21,8 +21,32 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: EDITORIAL }}
-      className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4 sm:pt-6"
+      className="pointer-events-none fixed inset-x-0 top-0 z-50 flex flex-col items-center px-3 pt-3 sm:px-4 sm:pt-5"
     >
+      {/* Full-width backdrop. The nav pill alone leaves the header's own
+          horizontal padding uncovered, so section text scrolling underneath
+          shows through as slivers either side of it. */}
+      <AnimatePresence initial={false}>
+        {scrolled || open ? (
+          <motion.div
+            key="nav-backdrop"
+            aria-hidden
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: EDITORIAL }}
+            className="pointer-events-none absolute inset-0 border-b border-[var(--border)] bg-[var(--bg)]/85 backdrop-blur-xl"
+          />
+        ) : null}
+      </AnimatePresence>
+
+      {/* Operational strip. Sits above the nav pill rather than inside it so the
+          long mono readout never fights the logo for horizontal room. */}
+      <div className="pointer-events-auto mb-1.5 hidden w-full max-w-[84rem] items-center gap-3 px-1 lg:flex">
+        <StatusReadout />
+        <span className="ml-auto swiss-index swiss-index-nowrap">{brand.role}</span>
+      </div>
+
       <nav
         aria-label="Navigasi utama"
         className={`pointer-events-auto flex w-full max-w-5xl items-center justify-between gap-3 rounded-full border px-3 py-2 transition-all duration-500 ease-editorial sm:px-4 xl:max-w-[84rem] ${
@@ -33,8 +57,15 @@ export default function Navbar() {
       >
         <a href="#top" className="group flex shrink-0 items-center gap-2.5 pl-1 pr-2">
           <CircuitLogo />
-          <span className="font-display text-sm font-semibold tracking-tight sm:text-base">
-            {brand.name}
+          <span className="flex flex-col leading-none">
+            <span className="font-display text-sm font-semibold tracking-tight sm:text-base">
+              {brand.name}
+            </span>
+            {/* Mobile-only role line: the desktop readout lives in the strip
+                above, and this keeps the wordmark from being just a logo. */}
+            <span className="mt-1 font-mono text-[8.5px] uppercase tracking-[0.18em] text-[var(--text-muted)] sm:hidden">
+              IT Engineering
+            </span>
           </span>
         </a>
 
@@ -46,7 +77,7 @@ export default function Navbar() {
                 <a
                   href={`#${link.id}`}
                   aria-current={isActive ? 'true' : undefined}
-                  className={`relative block rounded-full px-4 py-2 text-[13px] transition-colors duration-300 ${
+                  className={`relative block rounded-full px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.1em] transition-colors duration-300 xl:px-4 ${
                     isActive
                       ? 'text-[var(--accent-contrast)]'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -70,9 +101,10 @@ export default function Navbar() {
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
           <a
             href="#contact"
-            className="hidden rounded-full bg-[var(--accent)] px-5 py-2 text-[13px] font-semibold text-[var(--accent-contrast)] transition-colors duration-300 hover:bg-[var(--accent-hover)] sm:inline-block"
+            className="hidden items-center gap-1.5 rounded-full bg-[var(--accent)] px-4 py-2 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--accent-contrast)] transition-colors duration-300 hover:bg-[var(--accent-hover)] sm:inline-flex"
           >
             Konsultasi
+            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.2} />
           </a>
           <button
             type="button"
@@ -94,8 +126,14 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -16, scale: 0.98 }}
             transition={SPRING}
-            className="pointer-events-auto absolute inset-x-4 top-[calc(100%+0.5rem)] origin-top overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg)]/95 p-2 shadow-pill backdrop-blur-xl lg:hidden"
+            className="pointer-events-auto absolute inset-x-3 top-[calc(100%+0.5rem)] origin-top overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg)]/95 shadow-pill backdrop-blur-xl lg:hidden"
           >
+            <div className="flex items-center gap-2.5 border-b border-[var(--border)] px-4 py-3">
+              <span className="status-pulse" aria-hidden />
+              <span className="swiss-index swiss-index-nowrap">
+                {systemStatus.state} · {systemStatus.latency}
+              </span>
+            </div>
             <ul>
               {navLinks.map((link, index) => {
                 const isActive = active === link.id;
@@ -109,7 +147,7 @@ export default function Navbar() {
                     <a
                       href={`#${link.id}`}
                       onClick={() => setOpen(false)}
-                      className={`flex items-center justify-between border-b border-[var(--border)] px-4 py-3.5 text-sm transition-colors ${
+                      className={`flex items-center justify-between border-b border-[var(--border)] px-4 py-3 font-mono text-[12px] uppercase tracking-[0.08em] transition-colors ${
                         isActive ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'
                       }`}
                     >
@@ -123,14 +161,34 @@ export default function Navbar() {
             <a
               href="#contact"
               onClick={() => setOpen(false)}
-              className="mt-2 block rounded-full bg-[var(--accent)] px-5 py-3 text-center text-sm font-semibold text-[var(--accent-contrast)]"
+              className="mt-2 flex items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-5 py-3 font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-[var(--accent-contrast)]"
             >
-              Konsultasi
+              Mulai Diagnosis
+              <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.2} />
             </a>
           </motion.div>
         ) : null}
       </AnimatePresence>
     </motion.header>
+  );
+}
+
+/**
+ * `• SYSTEM STATUS: ALL ENGINES OPERATIONAL (0ms LATENCY)`
+ *
+ * The latency figure is derived from the same `systemStatus` object the mobile
+ * drawer reads, so there is exactly one source of truth for the readout and no
+ * chance of the two drifting apart.
+ */
+function StatusReadout() {
+  return (
+    <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-secondary)]">
+      <span className="status-pulse" aria-hidden />
+      <span className="text-[var(--text-primary)]">{systemStatus.label}:</span>
+      <span>{systemStatus.state}</span>
+      <span className="text-[var(--text-muted)]">({systemStatus.latency} Latency)</span>
+      <span className="text-[var(--text-muted)]">· {systemStatus.region}</span>
+    </p>
   );
 }
 

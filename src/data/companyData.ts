@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   BadgeCheck,
+  Binary,
   Boxes,
   Braces,
   ChartNoAxesCombined,
@@ -9,38 +10,86 @@ import {
   Database,
   Eye,
   FileStack,
+  Fingerprint,
   Gauge,
   GitBranch,
   Globe,
   LayoutGrid,
   Link2,
   MessagesSquare,
+  Network,
   PackageSearch,
   Repeat2,
+  Rocket,
   ScanSearch,
   ServerCog,
   Settings2,
   Share2,
+  ShieldCheck,
   ShoppingCart,
   Target,
+  Terminal,
   TrendingUp,
   Unplug,
   Users,
+  Waypoints,
   Workflow,
-  Wrench,
+  Zap,
 } from 'lucide-react';
+
+/* ============================================================================
+   BRAND — positioning: Professional IT Engineering Partner
+   ========================================================================== */
 
 export const brand = {
   name: 'LABSITE.ID',
   tagline: 'Your Business Problem Solver',
+  role: 'Professional IT Engineering Partner',
   subtitle:
-    'Perusahaan solusi digital yang berdedikasi membantu UMKM dan bisnis lokal memecahkan berbagai tantangan bisnis melalui pemanfaatan teknologi.',
+    'Kami mentransformasi operasional bisnis yang berantakan menjadi sistem digital yang otomatis, andal, dan terukur. Setiap sistem direkayasa khusus — bukan ditempel dari template.',
 } as const;
+
+/** Short engineering micro-copy injected at high-trust points across the page. */
+export const engineeringMarks: readonly string[] = [
+  'Zero-Bloat Architecture',
+  '100% Type-Safe Code',
+  'Built for High Scale',
+  'Enterprise-Grade Security',
+] as const;
+
+/** Header readout. Rendered verbatim as a live operational status line. */
+export const systemStatus = {
+  label: 'System Status',
+  state: 'All Engines Operational',
+  latency: '0ms',
+  region: 'ID-JKT',
+} as const;
+
+/**
+ * Rotating engineering log lines surfaced as dismissible toasts. Written as
+ * build-telemetry rather than sales copy so the interface reads as a running
+ * system, not a brochure.
+ */
+export type SystemLogEntry = {
+  tag: 'LOG' | 'DIAGNOSTIC' | 'DEPLOY' | 'SECURITY' | 'METRIC';
+  text: string;
+};
+
+export const systemLogs: readonly SystemLogEntry[] = [
+  { tag: 'DIAGNOSTIC', text: 'Zero latency verified across all endpoints' },
+  { tag: 'DEPLOY', text: 'High-concurrency system shipped to production' },
+  { tag: 'SECURITY', text: 'Dependency audit clean — zero critical findings' },
+  { tag: 'METRIC', text: 'Workflow automation cut manual input by 92%' },
+  { tag: 'LOG', text: 'Schema migration completed with zero downtime' },
+  { tag: 'DIAGNOSTIC', text: 'Type-safe build passed with 0 TypeScript errors' },
+  { tag: 'METRIC', text: 'Dashboard load time held under 120ms at peak' },
+  { tag: 'SECURITY', text: 'Auth layer hardened against session replay' },
+] as const;
 
 export const vision = {
   title: 'Visi',
   statement:
-    'Menjadi penyedia solusi masalah bisnis terpercaya bagi UMKM di Indonesia melalui pemanfaatan teknologi dan solusi digital yang inovatif, relevan, dan berorientasi pada pertumbuhan.',
+    'Menjadi mitra rekayasa sistem yang terbukti bagi bisnis Indonesia: setiap sistem yang kami bangun wajib dibuktikan dengan angka, bukan janji.',
 } as const;
 
 export type Mission = {
@@ -50,35 +99,35 @@ export type Mission = {
 };
 
 export const missions: readonly Mission[] = [
+    {
+      icon: ScanSearch,
+      title: 'Diagnosis Sebelum Solusi',
+      description:
+        'Kami memetakan hambatan operasional Anda lebih dulu. Teknologi hanya dipilih setelah masalahnya terukur.',
+    },
   {
-    icon: ScanSearch,
-    title: 'Identifikasi Masalah Nyata',
+    icon: Binary,
+    title: 'Custom-Built, Bukan Turunan',
     description:
-      'Kami memulai dengan memahami kondisi bisnis Anda secara mendalam, bukan menawarkan teknologi di muka.',
-  },
-  {
-    icon: Wrench,
-    title: 'Solusi Kustom',
-    description:
-      'Setiap solusi dirancang khusus mengikuti karakter, proses, dan skala bisnis Anda.',
+      'Setiap baris kode ditulis khusus mengikuti proses, data, dan skala bisnis Anda. Nol template, nol plugin mangkuk.',
   },
   {
     icon: Settings2,
-    title: 'Teknologi Fungsional',
+    title: 'Stack yang earning its keep',
     description:
-      'Kami memilih teknologi yang benar-benar bekerja dan menjawab kebutuhan, bukan teknologi demi tren.',
+      'Kami memilih teknologi yang wajib ada dan membuang sisanya. Dependency yang tidak menambah nilai tidak pernah masuk build.',
   },
   {
     icon: Repeat2,
-    title: 'Transformasi Digital',
+    title: 'Otomasi yang Terbukti',
     description:
-      'Proses manual diubah menjadi alur digital yang efisien, terukur, dan mudah dipelihara.',
+      'Pekerjaan berulang dipindah ke alur digital otomatis yang tercatat, bisa diaudit, dan tidak bergantung satu orang.',
   },
   {
     icon: BadgeCheck,
-    title: 'Mitra Jangka Panjang',
+    title: 'Pendampingan Pasca-Launch',
     description:
-      'Kami tumbuh bersama bisnis Anda melalui dukungan berkelanjutan setelah sistem berjalan.',
+      'Sistem yang berjalan adalah awal hubungan, bukan akhir. Monitoring, perbaikan, dan pengembangan lanjutan kami urus.',
   },
 ] as const;
 
@@ -90,48 +139,68 @@ export type FocusStage = {
 };
 
 export const focus = {
-  headline: 'Identify → Solve → Build → Grow',
+  headline: 'IDENTIFY → SOLVE → BUILD → SCALE',
   stages: [
     {
       step: '01',
       icon: ScanSearch,
       name: 'Identify',
       description:
-        'Kami petakan bagian bisnis Anda yang berjalan lambat, kacau, atau menyulitkan pengambilan keputusan.',
+        'Kami audit alur kerja, data, dan titik gesekan yang médicos，那 memotong produktivitas tim Anda.',
     },
     {
       step: '02',
       icon: Target,
       name: 'Solve',
       description:
-        'Setiap masalah dipetakan ke solusi yang paling masuk akal, terukur, dan bisa dikerjakan dengan cepat.',
+        'Setiap hambatan dipetakan ke solusi paling masuk akal yang terukur, terukur, dan bisa dikerjakan cepat.',
     },
     {
       step: '03',
       icon: Boxes,
       name: 'Build',
       description:
-        'Solusi dibangun sebagai sistem nyata: website, aplikasi internal, database, dashboard, atau otomasi.',
+        'Solusi dibangun sebagai sistem nyata: web, aplikasi internal, database, dashboard, dan otomasi.',
     },
     {
       step: '04',
       icon: TrendingUp,
-      name: 'Grow',
+      name: 'Scale',
       description:
-        'Sistem yang sudah berjalan menjadi dasar ekspansi: efisiensi, jangkauan, dan keputusan berbasis data.',
+        'Sistem yang berjalan menjadi fondasi ekspansi: efisiensi, jangkauan, dan keputusan berbasis data.',
     },
   ] as FocusStage[],
 } as const;
 
 export const belief = {
   quote:
-    'Technology Should Solve Problems, Not Create More. We provide the technology that the business actually needs.',
+    'Software should eliminate operational drag, not relocate it. Every line we ship has to earn its runtime.',
   points: [
-    'Teknologi hanya bernilai jikarame masalah yang diselesaikan lebih besar dari beban yang ditambahkan.',
-    'Satu sistem yang dipakai setiap hari lebih berguna daripada sepuluh aplikasi yang tidak pernah dibuka.',
-    'Solusi harus bisa dipakai tim bisnis sendiri, bukan hanya tim teknis.',
+    'Tekologi bernilai hanya jika beban yang dihilangkan lebih besar dari beban yang ditambahkan.',
+    'Satu sistem yang dipakai setiap hari lebih berharga dari sepuluh aplikasi yang tidak pernah dibuka.',
+    'Sistem harus bisa dioperasikan tim bisnis sendiri, bukan hanya tim teknis kami.',
   ],
 } as const;
+
+/* ============================================================================
+   SECTION INDEX — mandated Swiss micro-index labels
+   ========================================================================== */
+
+export const sectionIndex = {
+  hero: { index: '01', label: 'SYSTEM_INIT' },
+  about: { index: 'A1', label: 'PARTNER_PROFILE' },
+  focus: { index: 'A2', label: 'OPERATING_BELIEF' },
+  problems: { index: '02', label: 'COMMON_DIAGNOSTICS' },
+  approach: { index: 'A3', label: 'DELIVERY_PROTOCOL' },
+  manifesto: { index: '03', label: 'CODE_MANIFESTO' },
+  solutions: { index: '04', label: 'ARCHITECTURE_SOLUTIONS' },
+  work: { index: '05', label: 'FEATURED_PROJECTS' },
+  contact: { index: '06', label: 'CONTACT_GATEWAY' },
+} as const;
+
+/* ============================================================================
+   COMMON DIAGNOSTICS
+   ========================================================================== */
 
 export type SolutionPillarId = 'presence' | 'process' | 'systems' | 'automation';
 
@@ -152,10 +221,10 @@ export const problems: readonly Problem[] = [
     icon: Eye,
     title: 'Poor Digital Presence',
     symptom:
-      'Bisnis hanya mengandalkan media sosial atau dari mulut ke mulut, tanpa identitas digital yang bisa dipercaya calon pembeli.',
-    impact: 'Prospek baru sulit menemukan Anda, dan kredibilitas sulit dibuktikan.',
+      'Bisnis Anda hanya hidup di media sosial dan dari mulut ke mulut. Tidak ada identitas digital yang bisa dipercaya calon pembeli.',
+    impact: 'Prospek baru tidak menemukan Anda, dan kredibilitas tidak bisa dibuktikan secara teknis.',
     solution:
-      'Website perusahaan yang profesional, cepat, dan SEO-ready, dilengkapi Business Profile sehingga calon pelanggan menemukan Anda lewat pencarian dan langsung percaya.',
+      'Website korporat yang cepat, SEO-ready, dan dilengkapi business profile terstruktur — sehingga mesin pencari dan calon pelanggan menemukan Anda, lalu langsung memercayai.',
     pillars: ['presence'],
     span: 2,
   },
@@ -164,10 +233,10 @@ export const problems: readonly Problem[] = [
     icon: Gauge,
     title: 'Inefficient Operations',
     symptom:
-      'Pekerjaan operasional masih manual: dicatat di kertas, dikirim lewat chat pribadi, atau diinput berulang di banyak tempat.',
-    impact: 'Waktu terbuang, kesalahan input, dan biaya tenaga kerja naik seiring transaksi bertambah.',
+      'Pekerjaan operasional masih manual: dicatat di kertas, dikirim lewat chat pribadi, atau diinput ulang di banyak tempat.',
+    impact: 'Waktu terbuang, kesalahan input naik, dan biaya tenaga kerja meledak seiring transaksi bertambah.',
     solution:
-      'Digital workflow dan online forms memindahkan proses manual ke alur terstruktur yang tercatat otomatis dan bisa diaudit.',
+      'Digital workflow dan online forms memindahkan proses manual ke alur terstruktur yang tercatat otomatis, bisa diaudit, dan tidak bergantung satu orang.',
     pillars: ['process'],
     span: 1,
   },
@@ -176,10 +245,10 @@ export const problems: readonly Problem[] = [
     icon: FileStack,
     title: 'Disorganized Information',
     symptom:
-      'Data transaksi, pelanggan, dan produk tersebar di chat, spreadsheet, dan catatan pribadi yang berbeda-beda.',
-    impact: 'Keputusan bisnis diambil dari data yang tidak lengkap atau sudah usang.',
+      'Data transaksi, pelanggan, dan produk tersebar di chat, spreadsheet, dan catatan pribadi yang tidak saling terhubung.',
+    impact: 'Keputusan bisnis diambil dari data tidak lengkap atau sudah usang.',
     solution:
-      'Database system terpusat dengan data management yang rapi, sehingga ada satu sumber kebenaran untuk seluruh tim.',
+      'Database system terpusat dengan skema yang rapi dan data management konsisten — satu sumber kebenaran untuk seluruh tim.',
     pillars: ['systems', 'process'],
     span: 1,
   },
@@ -188,10 +257,10 @@ export const problems: readonly Problem[] = [
     icon: Users,
     title: 'Customer Acquisition',
     symptom:
-      'Promosi masih berupa tebakan, tidak ada jalur penjualan yang jelas dari orang tertarik menjadi pelanggan.',
-    impact: 'Anggaran marketing terbuang tanpa umpan balik yang bisa diukur.',
+      'Promosi masih berupa tebakan. Tidak ada jalur penjualan yang jelas dari orang tertarik menjadi pelanggan.',
+    impact: 'Anggararan marketing terbuang tanpa umpan balik yang bisa diukur.',
     solution:
-      'Landing page terarah, business profile yang kuat, dan customer management system agar alur продажи bisa dilacak.',
+      'Landing page terarah, business profile kuat, dan customer management system agar alur penjualan bisa dilacak ujung ke ujung.',
     pillars: ['presence', 'systems'],
     span: 1,
   },
@@ -200,10 +269,10 @@ export const problems: readonly Problem[] = [
     icon: ServerCog,
     title: 'Poor Internal Systems',
     symptom:
-      'Belum ada sistem manajemen internal tempat semua bagian bekerja dari data yang sama.',
+      'Belum ada sistem manajemen internal tempat seluruh tim bekerja dari satu sumber data yang sama.',
     impact: 'Data antar bagian bentrok, bahkan laporan yang saling bertentangan.',
     solution:
-      'Management system, dashboard, dan internal tools terpadu yang memberi satu gambaran kondisi bisnis ke seluruh tim.',
+      'Management system, dashboard, dan internal tools terpadu yang memberi satu gambaran kondisi bisnis real-time ke seluruh tim.',
     pillars: ['systems'],
     span: 2,
   },
@@ -212,10 +281,10 @@ export const problems: readonly Problem[] = [
     icon: Unplug,
     title: 'Disconnected Processes',
     symptom:
-      'Antara penjualan, stok, pembayaran, dan pelaporan tidak terhubung, sehingga tiap tahap diisi ulang manual.',
+      'Penjualan, stok, pembayaran, dan pelaporan tidak terhubung, sehingga tiap tahap diisi ulang manual.',
     impact: 'Informasi tidak sinkron dan pekerjaan yang sama dikerjakan dua kali.',
     solution:
-      'API integration dan data integration menghubungkan antar sistem dan channel, termasuk WhatsApp, sehingga data mengalir otomatis.',
+      'API dan data integration menghubungkan antar sistem dan channel — termasuk WhatsApp — sehingga data mengalir otomatis tanpa input ulang.',
     pillars: ['automation', 'systems'],
     span: 1,
   },
@@ -225,13 +294,17 @@ export const problems: readonly Problem[] = [
     title: 'Lack of Digital Strategy',
     symptom:
       'Teknologi dibeli karena ikut tren tanpa peta jalan, sehingga tidak ada arah antara biaya dan manfaat.',
-    impact: 'Investasi teknologi menjadi beban, bukan pendorong pertumbuhan.',
+    impact: 'Investasi teknologi berubah jadi beban, bukan pendorong pertumbuhan.',
     solution:
-      'Enam tahap metodologi kami, dari Discover sampai Optimize, memastikan teknologi dibangun berdasarkan diagnosis dan bukan tebakan.',
+      'Enam tahap delivery protocol kami, dari Discover sampai Optimize, memastikan teknologi dibangun berdasarkan diagnosis dan bukan tebakan.',
     pillars: ['presence', 'process', 'systems', 'automation'],
     span: 1,
   },
 ] as const;
+
+/* ============================================================================
+   DELIVERY PROTOCOL
+   ========================================================================== */
 
 export type ApproachStage = {
   id: string;
@@ -250,7 +323,7 @@ export const approach: readonly ApproachStage[] = [
     icon: Compass,
     name: 'Discover',
     description:
-      'Kami duduk bersama tim Anda untuk memahami proses kerja, data, dan kendala yang benar-benar terjadi di lapangan.',
+      'Kami duduk bersama tim Anda memetakan proses kerja, data, dan kendala yang benar-benar terjadi di lapangan — bukan yang tertulis di proposal.',
     deliverable: 'Dokumen kebutuhan bisnis dan peta masalah',
     duration: 'Tahap 1',
   },
@@ -260,7 +333,7 @@ export const approach: readonly ApproachStage[] = [
     icon: ScanSearch,
     name: 'Diagnose',
     description:
-      'Masalah dianalisis dan diprioritaskan berdasarkan dampak bisnis, bukan berdasarkan tren teknologi.',
+      'Masalah dianalisis dan diprioritaskan berdasarkan dampak bisnis serta effort-to-fix, bukan berdasarkan tren teknologi.',
     deliverable: 'Analisis akar masalah dan daftar prioritas',
     duration: 'Tahap 2',
   },
@@ -270,7 +343,7 @@ export const approach: readonly ApproachStage[] = [
     icon: LayoutGrid,
     name: 'Design',
     description:
-      'Solusi dan alur kerja didesain bersama Anda sebelum satu baris kode ditulis, termasuk simulasi alur pengguna.',
+      'Arsitektur, skema data, dan alur kerja disimulasikan bersama Anda sebelum satu baris kode ditulis — termasuk simulasi alur pengguna.',
     deliverable: 'Desain sistem, alur kerja, dan prototype',
     duration: 'Tahap 3',
   },
@@ -280,7 +353,7 @@ export const approach: readonly ApproachStage[] = [
     icon: Code2,
     name: 'Develop',
     description:
-      'Sistem dibangun dengan standar kualitas yang jelas, diuji pada alur nyata, dan dokumentasinya diserahkan.',
+      'Sistem dibangun dengan standar kualitas jelas, type-safe, diuji pada alur nyata, dan dokumentasinya diserahkan utuh.',
     deliverable: 'Website, aplikasi, database, atau sistem yang berjalan',
     duration: 'Tahap 4',
   },
@@ -290,7 +363,7 @@ export const approach: readonly ApproachStage[] = [
     icon: Globe,
     name: 'Deploy',
     description:
-      'Sistem dijalankan pada lingkungan produksi dengan domain, hosting, dan integrasi yang sudah disiapkan.',
+      'Sistem dijalankan di environment produksi dengan domain, hosting, dan integrasi yang sudah disiapkan serta ter-hardening.',
     deliverable: 'Sistem aktif dan siap digunakan',
     duration: 'Tahap 5',
   },
@@ -300,11 +373,69 @@ export const approach: readonly ApproachStage[] = [
     icon: TrendingUp,
     name: 'Optimize',
     description:
-      'Performa dipantau dan diperbaiki berdasarkan pemakaian nyata, lalu backlog perbaikan langsung dikerjakan.',
+      'Performa dipantau dan diperbaiki berdasarkan pemakaian nyata, lalu backlog perbaikan langsung dikerjakan tanpa nego.',
     deliverable: 'Laporan perbaikan dan rencana pengembangan berikutnya',
     duration: 'Tahap 6',
   },
 ] as const;
+
+/* ============================================================================
+   CODE MANIFESTO — [ 03 // CODE_MANIFESTO ]
+   ========================================================================== */
+
+export type ManifestoPillar = {
+  id: string;
+  icon: LucideIcon;
+  title: string;
+  tagline: string;
+  body: string;
+  proof: readonly string[];
+};
+
+export const manifesto: readonly ManifestoPillar[] = [
+  {
+    id: 'zero-template',
+    icon: Terminal,
+    title: 'Zero Template Policy',
+    tagline: 'Custom-built from zero',
+    body:
+      'Setiap baris kode ditulis khusus mengikuti proses unik bisnis Anda. Tidak ada CMS generik, tidak ada tema instan, tidak ada plugin mangkuk yang menambah beban dan menambah celah.',
+    proof: ['No CMS bloat', 'Hand-written markup', 'Zero theme debt'],
+  },
+  {
+    id: 'speed-security',
+    icon: ShieldCheck,
+    title: 'Built for Speed & Security',
+    tagline: 'Lean architecture, hardened surface',
+    body:
+      'Arsitektur ringan, bebas bloatware, dependency diminimalkan, dan setiap endpoint dilindungi praktik keamanan standar industri. Cepat dimuat dan sulit ditembus.',
+    proof: ['Minimal dependencies', 'Hardened endpoints', 'Audited builds'],
+  },
+  {
+    id: 'scalable-infra',
+    icon: Rocket,
+    title: 'Scalable Infrastructure',
+    tagline: 'Ready to grow with you',
+    body:
+      'Sistem dirancang siap bertumbuh seiring berkembangnya skala bisnis klien: skema data yang rapi, API yang stabil, dan arsitektur yang menyerap lonjakan beban.',
+    proof: ['Schema-first data', 'Stable API surface', 'Load-tested logic'],
+  },
+] as const;
+
+/** Word-strip for the manifesto section's infinite marquee. */
+export const manifestoMarquee: readonly string[] = [
+  'Zero-Bloat Architecture',
+  '100% Type-Safe Code',
+  'Built for High Scale',
+  'Enterprise-Grade Security',
+  'Audit-Ready Logging',
+  'Schema-First Data',
+  'API-First Integration',
+] as const;
+
+/* ============================================================================
+   ARCHITECTURE SOLUTIONS
+   ========================================================================== */
 
 export type SolutionPillar = {
   id: SolutionPillarId;
@@ -320,7 +451,7 @@ export const solutions: readonly SolutionPillar[] = [
     icon: Globe,
     name: 'Digital Presence',
     summary:
-      'Membuat bisnis Anda mudah ditemukan, dipercaya, dan menghasilkan calon pelanggan baru.',
+      'Membangun identitas digital yang ditemukan mesin pencari, dipercaya calon pembeli, dan menghasilkan pipeline nyata.',
     features: [
       { icon: Globe, name: 'Company Website', detail: 'Website korporat lengkap dengan struktur halaman yang jelas dan profesional.' },
       { icon: Target, name: 'Landing Page', detail: 'Halaman yang fokus konversi untuk kampanye, promosi, atau uji pasar.' },
@@ -348,7 +479,7 @@ export const solutions: readonly SolutionPillar[] = [
     icon: Database,
     name: 'Business Systems',
     summary:
-      'Sistem inti yang menyimpan data bisnis dan menyediakan gambaran kondisi usaha yang bisa ditindaklanjuti.',
+      'Sistem inti yang menyimpan data bisnis dan menyediakan gambaran kondisi usaha yang bisa langsung ditindaklanjuti.',
     features: [
       { icon: Settings2, name: 'Management System', detail: 'Sistem master untuk operasional bisnis yang tercatat dan terstruktur.' },
       { icon: Gauge, name: 'Dashboard', detail: 'Ringkasan metrik penting dalam satu tampilan untuk keputusan cepat.' },
@@ -372,6 +503,158 @@ export const solutions: readonly SolutionPillar[] = [
     ],
   },
 ] as const;
+
+/* ============================================================================
+   SCOPE DIAGNOSER — the interactive widget in the hero.
+   Selecting an operational problem + a business scale yields an
+   engineering module recommendation.
+   ========================================================================== */
+
+export type DiagnosticOption = {
+  id: string;
+  label: string;
+  headline: string;
+  recommendation: string;
+  pillar: SolutionPillarId;
+};
+
+export const diagnosticOptions: readonly DiagnosticOption[] = [
+  {
+    id: 'manual-ops',
+    label: 'Operasional Manual',
+    headline: 'Pekerjaan berulang masih dikerjakan di kertas dan chat.',
+    recommendation:
+      'Digital Workflow dan Online Forms memindahkan pencatatan manual ke alur terstruktur yang tercatat otomatis.',
+    pillar: 'process',
+  },
+  {
+    id: 'weak-presence',
+    label: 'Penjualan & Digital Presence',
+    headline: 'Prospek baru sulit menemukan dan tidak yakin tentang bisnis Anda.',
+    recommendation:
+      'Company Website yang profesional dan SEO-ready, ditambah Landing Page terarah untuk menaikkan konversi.',
+    pillar: 'presence',
+  },
+  {
+    id: 'messy-records',
+    label: 'Pencatatan & Stok Berantakan',
+    headline: 'Data tersebar di beberapa tempat dan sering tidak sinkron.',
+    recommendation:
+      'Database System terpusat dengan Inventory System sehingga ada satu sumber kebenaran untuk seluruh tim.',
+    pillar: 'systems',
+  },
+  {
+    id: 'disconnected-tools',
+    label: 'Proses Terputus antar Tim',
+    headline: 'Penjualan, stok, dan laporan tidak saling terhubung.',
+    recommendation:
+      'API Integration dan Automated Reporting membuat data mengalir antar sistem tanpa input ulang manual.',
+    pillar: 'automation',
+  },
+] as const;
+
+/** Business-scale stepper. Each step adjusts the recommended engineering depth. */
+export type ScaleStep = {
+  id: string;
+  label: string;
+  range: string;
+  depth: string;
+  modules: readonly string[];
+};
+
+export const scaleSteps: readonly ScaleStep[] = [
+  {
+    id: 'solo',
+    label: 'Solo / Pemula',
+    range: '1 pengguna',
+    depth: 'Fokus: satu sistem inti yang ringan.',
+    modules: ['Company Website', 'Basic CRM'],
+  },
+  {
+    id: 'small',
+    label: 'UMKM Kecil',
+    range: '2–10 pengguna',
+    depth: 'Fokus: digitalisasi alur harian.',
+    modules: ['Online Forms', 'Inventory System', 'Auto-Reporting'],
+  },
+  {
+    id: 'mid',
+    label: 'UMKM Bertumbuh',
+    range: '10–50 pengguna',
+    depth: 'Fokus: sistem terpadu & otomasi.',
+    modules: ['Management System', 'Dashboard', 'API Integration'],
+  },
+  {
+    id: 'large',
+    label: 'Skala Besar',
+    range: '50–200 pengguna',
+    depth: 'Fokus: integrasi & high availability.',
+    modules: ['Multi-branch Sync', 'WhatsApp API', 'Automated Reporting'],
+  },
+  {
+    id: 'enterprise',
+    label: 'Enterprise',
+    range: '200+ pengguna',
+    depth: 'Fokus: arsitektur terdistribusi & security.',
+    modules: ['Scalable Infra', 'Access Control', 'Custom Integrations'],
+  },
+] as const;
+
+/* ============================================================================
+   LIVE ARCHITECTURE VIEWER — node graph that lights up per diagnostic.
+   ========================================================================== */
+
+export type ArchNode = {
+  id: string;
+  label: string;
+  role: string;
+  icon: LucideIcon;
+};
+
+export type ArchFlow = {
+  id: string;
+  /** Maps a diagnostic option id to the ordered node ids that light up. */
+  path: readonly string[];
+  caption: string;
+};
+
+export const archNodes: readonly ArchNode[] = [
+  { id: 'client', label: 'Client App', role: 'Web & mobile', icon: Globe },
+  { id: 'api', label: 'API Layer', role: 'Type-safe contract', icon: Waypoints },
+  { id: 'auth', label: 'Access Control', role: 'Role & permission', icon: Fingerprint },
+  { id: 'workflow', label: 'Workflow Engine', role: 'Rules & automation', icon: Workflow },
+  { id: 'db', label: 'Database', role: 'Single source of truth', icon: Database },
+  { id: 'notify', label: 'Notification Hub', role: 'WA / email / push', icon: Zap },
+  { id: 'dashboard', label: 'Dashboard', role: 'Metric & reporting', icon: Gauge },
+  { id: 'cdn', label: 'Edge Delivery', role: 'Cache & asset CDN', icon: Network },
+] as const;
+
+export const archFlows: readonly ArchFlow[] = [
+  {
+    id: 'manual-ops',
+    path: ['client', 'api', 'workflow', 'db', 'notify'],
+    caption: 'Form intake → workflow otomatis → database → notifikasi. Input manual hilang.',
+  },
+  {
+    id: 'weak-presence',
+    path: ['cdn', 'client', 'api', 'db', 'dashboard'],
+    caption: 'Edge-delivered website → SEO content → analytics database → dashboard konversi.',
+  },
+  {
+    id: 'messy-records',
+    path: ['client', 'api', 'auth', 'db', 'dashboard'],
+    caption: 'Satu schema terpusat dengan access control → semua angka dashboard sinkron.',
+  },
+  {
+    id: 'disconnected-tools',
+    path: ['client', 'api', 'workflow', 'notify', 'db'],
+    caption: 'API mengintegrasikan kanal → workflow otomatis → data mengalir tanpa input ulang.',
+  },
+] as const;
+
+/* ============================================================================
+   FEATURED PROJECTS
+   ========================================================================== */
 
 export type Project = {
   id: string;
@@ -463,64 +746,21 @@ export const heroStats: readonly HeroStat[] = [
     id: 'tailored',
     count: 100,
     suffix: '%',
-    label: 'Tailored Solutions',
-    detail: 'Setiap sistem dibangun khusus untuk masalah bisnis Anda',
+    label: 'Custom-Built',
+    detail: 'Setiap sistem ditulis khusus untuk masalah bisnis Anda',
   },
   {
     id: 'stages',
     count: 6,
-    suffix: '-Stage',
-    label: 'Methodology',
-    detail: 'Dari diagnosis sampai optimasi berkelanjutan',
+    suffix: '-STAGE',
+    label: 'Delivery Protocol',
+    detail: 'Diagnose sampai optimize, dengan deliverable tiap tahap',
   },
   {
     id: 'partner',
     value: 'End-to-End',
-    label: 'Partner',
-    detail: 'Dari perencanaan, pembangunan, hingga pendampingan',
-  },
-] as const;
-
-export type DiagnosticOption = {
-  id: string;
-  label: string;
-  headline: string;
-  recommendation: string;
-  pillar: string;
-};
-
-export const diagnosticOptions: readonly DiagnosticOption[] = [
-  {
-    id: 'manual-ops',
-    label: 'Operasional Manual',
-    headline: 'Pekerjaan berulang masih dikerjakan di kertas dan chat.',
-    recommendation:
-      'Digital Workflow dan Online Forms memindahkan pencatatan manual ke alur terstruktur yang tercatat otomatis.',
-    pillar: 'Process Digitalization',
-  },
-  {
-    id: 'weak-presence',
-    label: 'Penjualan & Digital Presence',
-    headline: 'Prospek baru sulit menemukan dan tidak yakin tentang bisnis Anda.',
-    recommendation:
-      'Company Website yang profesional dan SEO-ready, ditambah Landing Page terarah untuk menaikkan konversi.',
-    pillar: 'Digital Presence',
-  },
-  {
-    id: 'messy-records',
-    label: 'Pencatatan & Stok Berantakan',
-    headline: 'Data tersebar di beberapa tempat dan sering tidak sinkron.',
-    recommendation:
-      'Database System terpusat dengan Inventory System sehingga ada satu sumber kebenaran untuk seluruh tim.',
-    pillar: 'Business Systems',
-  },
-  {
-    id: 'disconnected-tools',
-    label: 'Proses Terputus antar Tim',
-    headline: 'Penjualan, stok, dan laporan tidak saling terhubung.',
-    recommendation:
-      'API Integration dan Automated Reporting membuat data mengalir antar sistem tanpa input ulang manual.',
-    pillar: 'Automation & Integration',
+    label: 'Engineering Partner',
+    detail: 'Arsitektur, build, deploy, dan pendampingan berkelanjutan',
   },
 ] as const;
 
@@ -535,6 +775,10 @@ export type ProjectPreview = {
   blocks: readonly PreviewBlock[];
 };
 
+/* ============================================================================
+   CONTACT
+   ========================================================================== */
+
 export const contactInfo = {
   phone: '+62 812-0000-0000',
   email: 'hello@labsite.id',
@@ -545,12 +789,13 @@ export const contactInfo = {
 } as const;
 
 export const navLinks = [
-  { id: 'about', label: 'Tentang' },
-  { id: 'focus', label: 'Fokus' },
-  { id: 'problems', label: 'Masalah' },
+  { id: 'about', label: 'Partner' },
+  { id: 'focus', label: 'Prinsip' },
+  { id: 'problems', label: 'Diagnosis' },
   { id: 'approach', label: 'Metode' },
-  { id: 'solutions', label: 'Solusi' },
-  { id: 'work', label: 'Portofolio' },
+  { id: 'manifesto', label: 'Manifesto' },
+  { id: 'solutions', label: 'Arsitektur' },
+  { id: 'work', label: 'Kasus' },
   { id: 'contact', label: 'Kontak' },
 ] as const;
 
@@ -563,3 +808,16 @@ export const problemTypes = [
   'Automation & Integration',
   'Others',
 ] as const;
+
+/**
+ * Maps a pillar id to the full pillar record. `diagnosticOptions` stores only
+ * the id, so the diagnoser resolves name + icon + summary through this rather
+ * than duplicating them per option.
+ */
+export const pillarLookup: Record<SolutionPillarId, SolutionPillar> = solutions.reduce(
+  (acc, pillar) => {
+    acc[pillar.id] = pillar;
+    return acc;
+  },
+  {} as Record<SolutionPillarId, SolutionPillar>,
+);

@@ -1,7 +1,14 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, ArrowUp, CheckCircle2, Loader2, Mail, MapPin, Phone, Send } from 'lucide-react';
-import { brand, contactInfo, navLinks, problemTypes } from '../data/companyData';
+import {
+  brand,
+  contactInfo,
+  engineeringMarks,
+  navLinks,
+  problemTypes,
+  sectionIndex,
+} from '../data/companyData';
 import {
   EDITORIAL,
   Hairline,
@@ -10,7 +17,7 @@ import {
   RevealGroup,
   RevealItem,
   SPRING,
-  SwissIndex,
+  StickyIndex,
 } from './ui';
 
 type Fields = { name: string; email: string; message: string };
@@ -64,20 +71,18 @@ export default function ContactFooter() {
         <Hairline className="absolute inset-x-0 top-0" />
 
         <div className="shell">
-          <Reveal>
-            <SwissIndex index="06" label="CONTACT & FOOTER" />
-          </Reveal>
-          <Reveal delay={0.05} className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <h2 className="max-w-3xl text-balance text-fluid-5xl font-semibold leading-[0.95] text-[var(--text-primary)]">
-              Ceritakan masalahnya, kami petakan jalannya.
+          <StickyIndex index={sectionIndex.contact.index} label={sectionIndex.contact.label} />
+          <Reveal delay={0.05} className="mt-fluid-md flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <h2 className="max-w-[16ch] text-balance text-fluid-5xl font-semibold leading-[0.95] tracking-tight text-[var(--text-primary)]">
+              Ceritakan sistemnya. Kami petakan jalurnya.
             </h2>
             <p className="max-w-sm text-pretty text-sm leading-relaxed text-[var(--text-secondary)] lg:text-right">
-              Konsultasi awal tidak dipungut biaya. Kami memetakan masalah sebelum merekomendasikan
-              solusi apa pun.
+              Konsultasi awal tidak dipungut biaya. Tidak ada rekomendasi sebelum masalah Anda
+              terpetakan.
             </p>
           </Reveal>
 
-          <div className="mt-16 grid grid-cols-12 gap-x-gutter gap-y-12">
+          <div className="mt-fluid-lg grid grid-cols-12 gap-x-gutter gap-y-fluid-lg">
             <Reveal className="col-span-12 lg:col-span-7">
               <form onSubmit={onSubmit} noValidate>
                 <fieldset>
@@ -104,7 +109,7 @@ export default function ContactFooter() {
                   </div>
                 </fieldset>
 
-                <div className="mt-12 grid gap-10 sm:grid-cols-2">
+                <div className="mt-fluid-lg grid gap-8 sm:grid-cols-2">
                   <Field label="Nama" id="name" error={errors.name}>
                     <input
                       id="name"
@@ -142,7 +147,7 @@ export default function ContactFooter() {
                   </Field>
                 </div>
 
-                <div className="mt-12 flex flex-wrap items-center gap-5">
+                <div className="mt-fluid-lg flex flex-wrap items-center gap-5">
                   <MagneticTap
                     as="button"
                     type="submit"
@@ -201,11 +206,11 @@ export default function ContactFooter() {
               <RevealItem>
                 <div className="rounded-2xl border border-[var(--border)] bg-[var(--accent-soft)] p-8">
                   <p className="swiss-index swiss-index-strong">Langkah berikutnya</p>
-                  <ol className="mt-6 space-y-5">
+                  <ol className="mt-5 space-y-4">
                     {[
-                      'Kami membaca deskripsi masalah Anda.',
-                      'Kami jadwalkan sesi diagnosis singkat.',
-                      'Kami susun roadmap solusi dan estimasi.',
+                      'Kami membaca deskripsi hambatan yang Anda bawa.',
+                      'Kami jadwalkan sesi diagnosis singkat — 30 menit.',
+                      'Kami susun roadmap sistem, modul, dan estimasi kerja.',
                     ].map((line, index) => (
                       <li key={line} className="flex gap-4 text-sm text-[var(--text-primary)]">
                         <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--accent)]/30 font-mono text-[10px] text-[var(--accent)]">
@@ -223,26 +228,35 @@ export default function ContactFooter() {
       </section>
 
       <footer className="surface-invert border-t border-[var(--border)]">
-        <div className="shell py-16">
-          <div className="grid grid-cols-12 gap-x-gutter gap-y-12">
+        <div className="shell py-10 lg:py-14">
+          <div className="grid grid-cols-12 gap-x-gutter gap-y-9">
             <div className="col-span-12 md:col-span-5">
               <p className="font-display text-fluid-xl font-semibold tracking-tight text-[var(--text-primary)]">
                 {brand.name}
               </p>
-              <p className="mt-4 max-w-sm text-pretty text-sm leading-relaxed text-[var(--text-secondary)]">
+              <p className="mt-3 max-w-sm text-pretty text-sm leading-relaxed text-[var(--text-secondary)]">
                 {brand.subtitle}
               </p>
-              <p className="mt-7 swiss-index swiss-index-strong">{brand.tagline}</p>
+              <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)]">
+                {brand.role}
+              </p>
+              <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-1.5">
+                {engineeringMarks.map((mark) => (
+                  <li key={mark} className="swiss-index normal-case tracking-[0.1em]">
+                    {mark}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="col-span-6 md:col-span-3">
               <p className="swiss-index">Navigasi</p>
-              <ul className="mt-6 space-y-3">
+              <ul className="mt-5 space-y-2.5">
                 {navLinks.map((link) => (
                   <li key={link.id}>
                     <a
                       href={`#${link.id}`}
-                      className="text-sm text-[var(--text-secondary)] transition-colors duration-300 hover:text-[var(--accent)]"
+                      className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] transition-colors duration-300 hover:text-[var(--accent)]"
                     >
                       {link.label}
                     </a>
@@ -253,7 +267,7 @@ export default function ContactFooter() {
 
             <div className="col-span-6 md:col-span-4">
               <p className="swiss-index">Kontak</p>
-              <ul className="mt-6 space-y-3 text-sm text-[var(--text-secondary)]">
+              <ul className="mt-5 space-y-2.5 text-sm text-[var(--text-secondary)]">
                 <li>
                   <a
                     href={`mailto:${contactInfo.email}`}
@@ -289,7 +303,7 @@ export default function ContactFooter() {
             </div>
           </div>
 
-          <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-[var(--border)] pt-8 text-xs text-[var(--text-muted)] sm:flex-row sm:items-center">
+          <div className="mt-fluid-lg flex flex-col items-start justify-between gap-4 border-t border-[var(--border)] pt-7 text-xs text-[var(--text-muted)] sm:flex-row sm:items-center">
             <p>
               © {new Date().getFullYear()} {brand.name}. Seluruh hak cipta dilindungi.
             </p>

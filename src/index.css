@@ -4,10 +4,45 @@
 
 @layer base {
   /* ============================================================
+     RESPONSIVE SPACING — single source of truth
+     The mobile step is intentionally aggressive: a stacked column of
+     cards at 375px has no need for 80px of breathing room, so the
+     default is tight and the steps open up as room appears.
+     ============================================================ */
+  :root {
+    --gutter: 1.125rem;
+    /* Mobile sections are deliberately tight. A single column of cards at
+       375px needs 36px of air above and below, not 90px — the extra pixels buy
+       nothing and just add thumb travel. The step opens up as width appears. */
+    --section-y: 2.25rem;
+    --rail-gap: 0.75rem;
+    --index-top: 3.75rem;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --gutter: 2rem;
+      --section-y: 4rem;
+      --rail-gap: 1rem;
+      /* Nav sits lower once it drops its pt-4. */
+      --index-top: 4.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --gutter: clamp(2rem, 1rem + 5vw, 7rem);
+      --section-y: clamp(4rem, 3rem + 6vw, 10rem);
+      /* Desktop nav carries the status strip above the pill, so the sticky
+         index has to clear the taller header or the two overlap. */
+      --index-top: 6.25rem;
+    }
+  }
+
+  /* ============================================================
      LIGHT MODE (default) — Clean Warm Cream
      ============================================================ */
   :root {
-    --gutter: clamp(1.25rem, 0.5rem + 4vw, 7rem);
     --bg: #faf8f5;
     --bg-elevated: #ffffff;
     --border: #e8e2d9;
@@ -21,6 +56,10 @@
     --accent-soft: #f2ece4;
     --focus: #5c3d2e;
     --hairline: rgb(28 21 18 / 0.1);
+    /* Operational green, reserved exclusively for live-status signalling.
+       Never used as decoration: if it is on screen, something is "up". */
+    --status-ok: #2f8f52;
+    --status-ok-soft: #e6f2ea;
   }
 
   /* ============================================================
@@ -40,6 +79,8 @@
     --accent-soft: #241b15;
     --focus: #e5cfb3;
     --hairline: rgb(250 248 245 / 0.12);
+    --status-ok: #4bbd7b;
+    --status-ok-soft: #16281d;
   }
 
   /*
@@ -59,6 +100,8 @@
     --accent-hover: #d4b896;
     --accent-contrast: #1c1512;
     --accent-soft: #2d231c;
+    --status-ok: #5ec98c;
+    --status-ok-soft: #1b2a20;
     color: var(--text-primary);
     background-color: var(--bg);
   }
@@ -70,11 +113,32 @@
     --border-strong: #453429;
     --text-primary: #faf8f5;
     --text-secondary: #a89b90;
+    --text-muted: #7d7166;
     --accent-soft: #1f1712;
+    --status-ok: #4bbd7b;
+    --status-ok-soft: #14241b;
   }
 
   * {
     border-color: var(--border);
+  }
+
+  /*
+   * Anchor navigation has to clear the floating nav. Almost every section on
+   * this page is an anchor target, and the header is fixed, so without this a
+   * nav click parks the section title underneath it. Done once here as a
+   * document-wide rule rather than as a `scroll-mt-*` utility on seven
+   * sections, so a new section inherits it instead of forgetting it.
+   */
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    section[id] {
+      /* Desktop nav carries the status strip, so it is meaningfully taller. */
+      scroll-margin-top: 7.5rem;
+    }
   }
 
   html {
@@ -98,6 +162,19 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     font-feature-settings: 'ss01', 'cv01';
+    /* Plus Jakarta Sans ships a very narrow space glyph — measured at 0.134em
+       on this page, where most sans faces sit near 0.26em. The effect is a
+       body line that reads "masalahyang" instead of "masalah yang". Widening
+       by 0.11em restores the ratio and, being em-based, holds at every size
+       rather than only where it was noticed. Reset on the mono faces below,
+       where a wide space is already correct and adding to it would loosen
+       tracked uppercase labels. */
+    word-spacing: 0.11em;
+    /* Safety net for zero horizontal overflow. `clip` (not `hidden`) so the
+       element does not become a scroll container — `hidden` on an ancestor
+       silently kills `position: sticky` for every descendant, which the
+       StickyIndex and the pinned approach track both depend on. */
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4 {
@@ -190,7 +267,13 @@
     padding: 0.875rem 1.75rem;
     font-size: 0.875rem;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.005em;
+    /* Plus Jakarta Sans sets an unusually narrow space glyph — measured at
+       1.88px on a 14px semibold label, versus ~3.6px for a typical sans.
+       At this size that glues words together ("MasalahAnda"). Restoring the
+       gap here is a per-component correction, not a global override: at body
+       sizes (16px+) the same glyph proportion reads fine. */
+    word-spacing: 0.09em;
     text-align: center;
     white-space: nowrap;
     transition:
@@ -234,6 +317,9 @@
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--text-muted);
+    /* JetBrains Mono's space is already ~0.86em wide; the body's sans
+       correction must not compound it. */
+    word-spacing: normal;
   }
 
   .swiss-index-nowrap {
@@ -256,21 +342,187 @@
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--text-secondary);
+    word-spacing: normal;
     transition: border-color 300ms, color 300ms;
+  }
+
+  /* ============================================================
+     LIVE STATUS SIGNAL
+     The green dot is a semantic signal, not decoration: it only ever
+     appears next to a genuine "operational" readout. Two stacked rings
+     stand in for a glow — cheap, GPU-friendly, and it survives the
+     no-blur rule.
+     ============================================================ */
+  .status-pulse {
+    position: relative;
+    display: inline-flex;
+    height: 0.4375rem;
+    width: 0.4375rem;
+    flex: none;
+  }
+
+  .status-pulse::before,
+  .status-pulse::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    border-radius: 9999px;
+    background-color: var(--status-ok);
+  }
+
+  .status-pulse::before {
+    animation: status-ring 2.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .status-pulse::after {
+    position: relative;
+    animation: status-blink 2.6s ease-in-out infinite;
+  }
+
+  @keyframes status-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    70%,
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+
+  @keyframes status-blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
+  }
+
+  /* ============================================================
+     INFINITE MARQUEE
+     The viewport clips; the track holds two identical item lists and
+     translates -50%, which puts the wrap point exactly one full list
+     width away. Nothing to measure in JS, no resize listener, and the
+     animation stays on the compositor (transform only).
+     Hover/focus pauses it so the text is actually readable.
+     ============================================================ */
+  .marquee {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 6%,
+      #000 94%,
+      transparent
+    );
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    flex: none;
+    align-items: center;
+    animation: marquee-slide var(--marquee-duration, 38s) linear infinite;
+  }
+
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-reverse .marquee-track {
+    animation-direction: reverse;
+  }
+
+  @keyframes marquee-slide {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  /* ============================================================
+     HORIZONTAL SNAP RAIL
+     Native scroll-snap, not a JS-driven transform track. The browser
+     owns the touch physics, so there is no scroll hijack, no
+     main-thread scroll handler doing layout, and the gesture stays
+     interruptible — which is the whole point on a phone.
+     The negative margin + matching padding is the full-bleed idiom:
+     cards start at --gutter and run to the screen edge.
+     ============================================================ */
+  .rail {
+    display: flex;
+    align-items: stretch;
+    gap: var(--rail-gap);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline-start: var(--gutter);
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail > * {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* Same scroller, but every item flows past without a detent. Used for
+     tab strips, where snapping to one pill per flick is hostile. */
+  .rail-free {
+    scroll-snap-type: none;
+  }
+
+  .rail-free > * {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
+
+  /* Slide width. 82% keeps the next card's edge visible as an affordance
+     that the rail continues, which is what tells a thumb there is more. */
+  .rail-slide {
+    width: 82%;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .rail-slide {
+      width: 62%;
+    }
+  }
+
+  /* Swiss micro-index that pins under the floating nav while its section
+     is in view. Isolated above the section's own Hairline so the two
+     1px rules stack into a crisp double rule. */
+  .index-pin {
+    position: sticky;
+    top: var(--index-top);
+    z-index: 30;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    padding-block: 0.5rem;
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--border);
   }
 
   .hairline-t {
     border-top: 1px solid var(--border);
-  }
-
-  /* Marquee pauses on hover and on keyboard focus. */
-  .marquee-track {
-    will-change: transform;
-    transform: translate3d(0, 0, 0);
-  }
-  .marquee-viewport:hover .marquee-track,
-  .marquee-viewport:focus-within .marquee-track {
-    animation-play-state: paused;
   }
 
   .gpu {
@@ -288,21 +540,5 @@
   }
   .tabular {
     font-variant-numeric: tabular-nums;
-  }
-  .fade-edge-x {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 var(--edge, 6rem),
-      #000 calc(100% - var(--edge, 6rem)),
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 var(--edge, 6rem),
-      #000 calc(100% - var(--edge, 6rem)),
-      transparent 100%
-    );
   }
 }

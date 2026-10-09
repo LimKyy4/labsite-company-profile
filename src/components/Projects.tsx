@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, ExternalLink, Lock } from 'lucide-react';
-import { projects, type Project } from '../data/companyData';
-import { EDITORIAL, Hairline, Reveal, RevealGroup, RevealItem, SPRING, SwissIndex } from './ui';
+import { projects, sectionIndex, type Project } from '../data/companyData';
+import { EDITORIAL, Hairline, Reveal, RevealGroup, RevealItem, SPRING, StickyIndex } from './ui';
 
 type View = 'challenges' | 'solutions';
 
 const views: { id: View; label: string }[] = [
-  { id: 'challenges', label: 'Tantangan Klien' },
-  { id: 'solutions', label: 'Solusi Yang Dibangun' },
+  { id: 'challenges', label: 'Hambatan Klien' },
+  { id: 'solutions', label: 'Yang Kami Bangun' },
 ];
 
 export default function Projects() {
@@ -19,17 +19,15 @@ export default function Projects() {
       <Hairline className="absolute inset-x-0 top-0" />
 
       <div className="shell">
-        <Reveal>
-          <SwissIndex index="05" label="FEATURED PROJECTS" />
-        </Reveal>
-        <Reveal delay={0.05} className="mt-6 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <StickyIndex index={sectionIndex.work.index} label={sectionIndex.work.label} />
+        <Reveal delay={0.05} className="mt-fluid-md flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="max-w-3xl text-balance text-fluid-5xl font-semibold leading-[0.95] text-[var(--text-primary)]">
-              Dua sistem yang bisa Anda coba sendiri.
+            <h2 className="max-w-[16ch] text-balance text-fluid-5xl font-semibold leading-[0.95] tracking-tight text-[var(--text-primary)]">
+              Dua sistem yang bisa Anda buka sendiri.
             </h2>
-            <p className="mt-6 max-w-2xl text-pretty text-fluid-base leading-relaxed text-[var(--text-secondary)]">
-              Setiap project aktif di environment publik, jadi Anda bisa langsung membuka dan
-              menilai hasilnya.
+            <p className="mt-4 max-w-2xl text-pretty text-fluid-base leading-relaxed text-[var(--text-secondary)]">
+              Keduanya masih live di environment publik. Periksalah sendiri kecepatannya, alur
+              datanya, dan apakah masalah yang Anda bawa benar-benar terjawab.
             </p>
           </div>
 
@@ -66,7 +64,7 @@ export default function Projects() {
           </div>
         </Reveal>
 
-        <RevealGroup className="mt-16 grid gap-6 xl:grid-cols-2">
+        <RevealGroup className="mt-fluid-lg grid gap-6 xl:grid-cols-2">
           {projects.map((project) => (
             <RevealItem key={project.id}>
               <ProjectShowcase project={project} view={view} />
@@ -156,7 +154,7 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
 
         <div className="mt-7 min-h-[10.5rem] rounded-xl border border-[var(--border)] bg-[var(--bg)] p-5">
           <p className="swiss-index">
-            {view === 'challenges' ? 'Tantangan yang ditemukan' : 'Yang kami bangun'}
+            {view === 'challenges' ? 'Hambatan yang ditemukan' : 'Yang kami bangun'}
           </p>
           <AnimatePresence mode="wait">
             <motion.ul

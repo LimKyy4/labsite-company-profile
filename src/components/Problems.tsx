@@ -1,54 +1,71 @@
-import { useCallback, useState, type CSSProperties } from 'react';
+import { useCallback, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, ArrowUpRight, Sparkles, X } from 'lucide-react';
-import { problems, solutions, type Problem } from '../data/companyData';
-import { useEscapeKey, useLockBodyScroll, useReducedMotion } from '../hooks';
-import { EDITORIAL, Hairline, IconBadge, Reveal, SPRING, SwissIndex } from './ui';
+import { problems, sectionIndex, solutions, type Problem } from '../data/companyData';
+import { useEscapeKey, useLockBodyScroll, useMediaQuery } from '../hooks';
+import { Marquee } from './Marquee';
+import {
+  Hairline,
+  IconBadge,
+  Reveal,
+  SnapRail,
+  SPRING,
+  SPRING_TAP,
+  StickyIndex,
+} from './ui';
 
 export default function Problems() {
   const [openId, setOpenId] = useState<string | null>(null);
-  const reduced = useReducedMotion();
   const active = problems.find((problem) => problem.id === openId) ?? null;
 
   useLockBodyScroll(Boolean(active));
   useEscapeKey(Boolean(active), useCallback(() => setOpenId(null), []));
-
-  // Duplicated once so the -50% translate wraps seamlessly.
-  const track = [...problems, ...problems];
 
   return (
     <section id="problems" className="surface relative py-section">
       <Hairline className="absolute inset-x-0 top-0" />
 
       <div className="shell">
-        <Reveal>
-          <SwissIndex index="02" label="COMMON PROBLEMS" />
-        </Reveal>
-        <Reveal delay={0.05} className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <h2 className="max-w-3xl text-balance text-fluid-5xl font-semibold leading-[0.95] text-[var(--text-primary)]">
-            Tujuh masalah yang paling sering menghambat pertumbuhan bisnis lokal.
+        <StickyIndex index={sectionIndex.problems.index} label={sectionIndex.problems.label} />
+        <Reveal
+          delay={0.05}
+          className="mt-fluid-md flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"
+        >
+          <h2 className="max-w-[16ch] text-balance text-fluid-5xl font-semibold leading-[0.95] tracking-tight text-[var(--text-primary)]">
+            Tujuh hambatan yang paling sering menahan pertumbuhan.
           </h2>
           <p className="max-w-sm text-pretty text-sm leading-relaxed text-[var(--text-secondary)] lg:text-right">
-            Berjalan otomatis, berhenti saat kursor diarahkan. Klik kartu untuk melihat bagaimana
-            LABSITE.ID menyelesaikannya.
+            Gejala, dampak, dan jalur perbaikannya. Geser untuk menelusuri, ketuk kartu untuk
+            melihat bagaimana sistem kami menyelesaikannya.
           </p>
         </Reveal>
       </div>
 
-      {/* Edge-to-edge: intentionally outside .shell so cards bleed to both margins. */}
-      <div className="marquee-viewport fade-edge-x relative mt-14 overflow-hidden [--edge:4rem]">
-        <div
-          className={`marquee-track flex w-max gap-4 px-2 ${reduced ? '' : 'animate-marquee'}`}
-          style={reduced ? undefined : ({ '--marquee-duration': '58s' } as CSSProperties)}
+      {/* Diagnostic ticker — the seven failure modes running as one continuous
+          band. Full-bleed on purpose: it reads as an instrument strip, and the
+          mask fades it into the gutter so it never needs side padding. */}
+      <div className="relative mt-fluid-lg border-y border-[var(--border)] py-3">
+        <Marquee
+          duration={46}
+          itemClassName="flex items-center gap-2.5 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]"
+          gapClassName="gap-6"
+          edgeClassName="pr-6"
         >
-          {track.map((problem, index) => (
-            <ProblemCard
-              key={`${problem.id}-${index}`}
-              problem={problem}
-              onOpen={() => setOpenId(problem.id)}
-            />
+          {problems.map((problem) => (
+            <span key={problem.id} className="flex items-center gap-2.5">
+              <span>{problem.title}</span>
+              <span className="inline-block h-1 w-1 rotate-45 bg-[var(--accent)]" aria-hidden />
+            </span>
           ))}
-        </div>
+        </Marquee>
+      </div>
+
+      <div className="shell">
+        <SnapRail label="Daftar diagnosis" className="mt-fluid-lg">
+          {problems.map((problem) => (
+            <ProblemCard key={problem.id} problem={problem} onOpen={() => setOpenId(problem.id)} />
+          ))}
+        </SnapRail>
       </div>
 
       <AnimatePresence>
@@ -66,8 +83,9 @@ function ProblemCard({ problem, onOpen }: { problem: Problem; onOpen: () => void
       type="button"
       onClick={onOpen}
       whileHover={{ y: -4 }}
-      transition={{ duration: 0.3, ease: EDITORIAL }}
-      className="group card card-hover flex w-[20rem] shrink-0 flex-col items-start p-6 text-left sm:w-[22rem] sm:p-7"
+      whileTap={{ scale: 0.975 }}
+      transition={SPRING_TAP}
+      className="group rail-slide card card-hover flex flex-col items-start p-5 text-left sm:p-6"
     >
       <div className="flex w-full items-start justify-between gap-4">
         <IconBadge icon={Icon} size="sm" />
@@ -76,20 +94,30 @@ function ProblemCard({ problem, onOpen }: { problem: Problem; onOpen: () => void
           strokeWidth={1.6}
         />
       </div>
-      <h3 className="mt-5 font-display text-lg font-semibold text-[var(--text-primary)]">
+      <h3 className="mt-4 font-display text-lg font-semibold tracking-tight text-[var(--text-primary)]">
         {problem.title}
       </h3>
-      <p className="mt-2.5 text-sm leading-relaxed text-[var(--text-secondary)]">{problem.symptom}</p>
-      <span className="mt-6 swiss-index swiss-index-strong opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">{problem.symptom}</p>
+      <span className="mt-5 inline-flex items-center gap-1.5 swiss-index swiss-index-strong">
         Solusi
+        <ArrowUpRight className="h-3 w-3" strokeWidth={2} />
       </span>
     </motion.button>
   );
 }
 
+/**
+ * Bottom sheet on phones, side panel from `lg` up. The sheet exists so the
+ * close affordance lands inside thumb reach instead of the top-right corner,
+ * and so the whole panel is dismissable by dragging the scrim.
+ */
 function ProblemDrawer({ problem, onClose }: { problem: Problem; onClose: () => void }) {
+  const wide = useMediaQuery('(min-width: 1024px)');
   const Icon = problem.icon;
   const related = solutions.filter((pillar) => problem.pillars.includes(pillar.id));
+
+  const hidden = wide ? { x: '100%' } : { y: '100%' };
+  const shown = wide ? { x: 0 } : { y: 0 };
 
   return (
     <motion.div
@@ -101,21 +129,21 @@ function ProblemDrawer({ problem, onClose }: { problem: Problem; onClose: () => 
       role="dialog"
       aria-modal="true"
       aria-labelledby="drawer-title"
-      className="fixed inset-0 z-[70] flex items-stretch justify-end bg-black/35 backdrop-blur-sm"
+      className="fixed inset-0 z-[70] flex items-end justify-end bg-black/40 lg:items-stretch"
     >
       <motion.aside
-        initial={{ x: '100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '100%' }}
+        initial={hidden}
+        animate={shown}
+        exit={hidden}
         transition={SPRING}
         onClick={(event) => event.stopPropagation()}
-        className="surface flex h-full w-full max-w-xl flex-col overflow-y-auto border-l border-[var(--border)]"
+        className="surface flex max-h-[86dvh] w-full flex-col overflow-y-auto rounded-t-3xl border-t border-[var(--border)] lg:max-h-none lg:h-full lg:max-w-xl lg:rounded-none lg:rounded-l-3xl lg:border-l lg:border-t-0"
       >
-        <header className="flex items-start justify-between gap-6 border-b border-[var(--border)] p-7 sm:p-8">
+        <header className="flex items-start justify-between gap-6 border-b border-[var(--border)] p-5 sm:p-7">
           <div className="flex items-start gap-4">
             <IconBadge icon={Icon} />
             <div>
-              <p className="swiss-index">Problem</p>
+              <p className="swiss-index">Diagnosis</p>
               <h3
                 id="drawer-title"
                 className="mt-2 font-display text-fluid-xl font-semibold tracking-tight text-[var(--text-primary)]"
@@ -128,13 +156,13 @@ function ProblemDrawer({ problem, onClose }: { problem: Problem; onClose: () => 
             type="button"
             onClick={onClose}
             aria-label="Tutup"
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-secondary)] transition-colors duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-secondary)] transition-colors duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
             <X className="h-4 w-4" />
           </button>
         </header>
 
-        <div className="flex-1 space-y-8 p-7 sm:p-8">
+        <div className="flex-1 space-y-6 p-5 sm:p-7">
           <div>
             <p className="swiss-index flex items-center gap-2">
               <AlertTriangle className="h-3 w-3" strokeWidth={2} />
@@ -152,7 +180,7 @@ function ProblemDrawer({ problem, onClose }: { problem: Problem; onClose: () => 
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[var(--accent)]/25 bg-[var(--accent-soft)] p-6">
+          <div className="rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent-soft)] p-5">
             <p className="swiss-index swiss-index-strong flex items-center gap-2">
               <Sparkles className="h-3 w-3" strokeWidth={2} />
               Bagaimana LABSITE.ID menyelesaikannya
@@ -164,7 +192,7 @@ function ProblemDrawer({ problem, onClose }: { problem: Problem; onClose: () => 
 
           {related.length ? (
             <div>
-              <p className="swiss-index">Pilar solusi terkait</p>
+              <p className="swiss-index">Pilar arsitektur terkait</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {related.map((pillar) => {
                   const PillarIcon = pillar.icon;

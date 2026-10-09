@@ -41,6 +41,9 @@ export default {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
         display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+        // Reserved for the manifesto / editorial statements: wider, more
+        // characterful than the workhorse display face.
+        editorial: ['Syne', '"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       fontSize: {
@@ -56,8 +59,13 @@ export default {
         'fluid-6xl': 'clamp(3rem, 2.1rem + 6vw, 8rem)',
       },
       spacing: {
-        'gutter': 'clamp(1.25rem, 0.5rem + 3.75vw, 5rem)',
-        'section': 'clamp(5rem, 3.5rem + 7.5vw, 11rem)',
+        /* Both are driven by --gutter / --section-y in index.css so the
+           responsive steps live in one place. */
+        'gutter': 'var(--gutter)',
+        'section': 'var(--section-y)',
+        /* Vertical rhythm *inside* a section. Deliberately much tighter than
+           the section padding: this is the "no wasted mobile pixels" dial. */
+        'stack': 'clamp(1.5rem, 1rem + 2.5vw, 3.25rem)',
         'fluid-xs': 'clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem)',
         'fluid-sm': 'clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem)',
         'fluid-md': 'clamp(1rem, 0.8rem + 1vw, 1.5rem)',
@@ -80,23 +88,13 @@ export default {
         editorial: 'cubic-bezier(0.16, 1, 0.3, 1)',
         swift: 'cubic-bezier(0.32, 0.72, 0, 1)',
       },
-      keyframes: {
-        marquee: {
-          from: { transform: 'translate3d(0, 0, 0)' },
-          to: { transform: 'translate3d(-50%, 0, 0)' },
-        },
-        ping: {
-          '75%, 100%': { transform: 'scale(2.2)', opacity: '0' },
-        },
-        'spin-slow': {
-          from: { transform: 'rotate(0deg)' },
-          to: { transform: 'rotate(360deg)' },
-        },
-      },
-      animation: {
-        marquee: 'marquee var(--marquee-duration, 48s) linear infinite',
-        'ping-slow': 'ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite',
-      },
+      /* The marquee and the live-status pulse are defined as component classes
+         in index.css rather than utilities: both need a nested structure
+         (track / duplicate copy, dot / rings) that a single utility class
+         cannot express, and both are disabled wholesale by the global
+         prefers-reduced-motion override in index.css. */
+      keyframes: {},
+      animation: {},
     },
   },
   plugins: [],
