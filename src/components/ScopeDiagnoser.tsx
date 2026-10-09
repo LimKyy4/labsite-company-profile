@@ -7,6 +7,8 @@ import {
   scaleSteps,
   type DiagnosticOption,
 } from '../data/companyData';
+import { ui } from '../i18n/ui';
+import { useLanguage } from '../context/LanguageContext';
 import { useMediaQuery } from '../hooks';
 import { EDITORIAL, SnapRail, SPRING, SPRING_TAP } from './ui';
 
@@ -26,6 +28,7 @@ export default function ScopeDiagnoser() {
   const [scaleId, setScaleId] = useState(scaleSteps[1].id);
 
   const wide = useMediaQuery('(min-width: 1024px)');
+  const { t, lang } = useLanguage();
   const selected = diagnosticOptions.find((o) => o.id === optionId) ?? diagnosticOptions[0];
   const scale = scaleSteps.find((s) => s.id === scaleId) ?? scaleSteps[0];
   const pillar = pillarLookup[selected.pillar];
@@ -33,43 +36,46 @@ export default function ScopeDiagnoser() {
 
   // Reorder the scale's module list so anything this pillar actually owns is
   // read first. Stable sort, so the order is deterministic between renders.
-  const pillarFeatures = pillar.features.map((feature) => feature.name);
+  // Keys are compared on the Indonesian variant because that is the stable
+  // identity of a module; the pair object changes shape with the language but
+  // `.id` does not.
+  const pillarFeatures = pillar.features.map((feature) => feature.name.id);
   const modules = [...scale.modules].sort(
-    (a, b) => Number(pillarFeatures.includes(b)) - Number(pillarFeatures.includes(a)),
+    (a, b) => Number(pillarFeatures.includes(a.id)) - Number(pillarFeatures.includes(b.id)),
   );
 
   return (
     <div className="card overflow-hidden rounded-2xl">
       <header className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3 sm:px-5">
         <Activity className="h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={1.6} />
-        <h2 className="font-display text-sm font-medium tracking-tight">Scope Diagnoser</h2>
+        <h2 className="font-display text-sm font-medium tracking-tight">{t(ui.diagnoser.title)}</h2>
         <span className="ml-auto flex items-center gap-2">
           <span className="status-pulse" aria-hidden />
-          <span className="swiss-index swiss-index-nowrap">Live</span>
+          <span className="swiss-index swiss-index-nowrap">{t(ui.diagnoser.live)}</span>
         </span>
       </header>
 
       <div className="p-4 sm:p-6">
         {/* ---- Input 1: which operation is failing ---- */}
         <fieldset>
-          <legend className="swiss-index">01 // Hambatan utama</legend>
+          <legend className="swiss-index">{t(ui.diagnoser.legendProblem)}</legend>
           {wide ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {diagnosticOptions.map((option) => (
                 <OptionPill
                   key={option.id}
-                  label={option.label}
+                  label={t(option.label)}
                   active={option.id === selected.id}
                   onSelect={() => setOptionId(option.id)}
                 />
               ))}
             </div>
           ) : (
-            <SnapRail label="Hambatan bisnis" indicator="none" snap={false} className="mt-3">
+            <SnapRail label={t(ui.diagnoser.railLabel)} indicator="none" snap={false} className="mt-3">
               {diagnosticOptions.map((option) => (
                 <OptionPill
                   key={option.id}
-                  label={option.label}
+                  label={t(option.label)}
                   active={option.id === selected.id}
                   onSelect={() => setOptionId(option.id)}
                 />
@@ -82,9 +88,9 @@ export default function ScopeDiagnoser() {
         <fieldset className="mt-5">
           <legend className="swiss-index flex items-center gap-1.5">
             <Scale className="h-3 w-3" strokeWidth={2} />
-            02 // Skala bisnis
+            {t(ui.diagnoser.legendScale)}
           </legend>
-          <div className="mt-3 grid grid-cols-5 gap-1.5" role="radiogroup" aria-label="Skala bisnis">
+          <div className="mt-3 grid grid-cols-5 gap-1.5" role="radiogroup" aria-label={t(ui.diagnoser.scaleAria)}>
             {scaleSteps.map((step, index) => {
               const active = step.id === scale.id;
               return (
@@ -94,7 +100,7 @@ export default function ScopeDiagnoser() {
                   role="radio"
                   aria-checked={active}
                   onClick={() => setScaleId(step.id)}
-                  whileTap={{ scale: 0.94 }}
+                  whileTap={{ scale: 0.96 }}
                   transition={SPRING_TAP}
                   className={`relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-2.5 transition-colors duration-300 ${
                     active
@@ -113,7 +119,7 @@ export default function ScopeDiagnoser() {
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   <span className="relative z-10 hidden text-[9px] leading-tight sm:block">
-                    {step.range}
+                    {t(step.range)}
                   </span>
                 </motion.button>
               );
@@ -121,15 +127,15 @@ export default function ScopeDiagnoser() {
           </div>
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
-              key={scale.id}
+              key={`${scale.id}-${lang}`}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.24, ease: EDITORIAL }}
               className="mt-2.5 text-[11px] leading-relaxed text-[var(--text-muted)]"
             >
-              <span className="font-medium text-[var(--text-secondary)]">{scale.label}</span>{' '}
-              · {scale.depth}
+              <span className="font-medium text-[var(--text-secondary)]">{t(scale.label)}</span>{' '}
+              · {t(scale.depth)}
             </motion.p>
           </AnimatePresence>
         </fieldset>
@@ -137,7 +143,7 @@ export default function ScopeDiagnoser() {
         {/* ---- Output ---- */}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={`${selected.id}-${scale.id}`}
+            key={`${selected.id}-${scale.id}-${lang}`}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
@@ -149,26 +155,26 @@ export default function ScopeDiagnoser() {
                 <PillarIcon className="h-4 w-4" strokeWidth={1.7} />
               </span>
               <div className="min-w-0">
-                <p className="swiss-index swiss-index-strong">Rekomendasi modul</p>
+                <p className="swiss-index swiss-index-strong">{t(ui.diagnoser.recommendationTitle)}</p>
                 <p className="mt-1.5 font-display text-base font-semibold leading-snug tracking-tight text-[var(--text-primary)]">
-                  {pillar.name}
+                  {t(pillar.name)}
                 </p>
               </div>
             </div>
 
             <p className="mt-3.5 text-sm leading-relaxed text-[var(--text-secondary)]">
-              {selected.recommendation}
+              {t(selected.recommendation)}
             </p>
 
             <div className="mt-4 border-t border-[var(--border)] pt-3.5">
               <p className="swiss-index flex items-center gap-1.5">
                 <Layers className="h-3 w-3" strokeWidth={2} />
-                Stack untuk skala {scale.label}
+                {t(ui.diagnoser.stackTitle)} {t(scale.label)}
               </p>
               <ul className="mt-2.5 flex flex-wrap gap-1.5">
                 {modules.map((module) => (
-                  <li key={module} className="chip normal-case tracking-normal">
-                    {module}
+                  <li key={module.id} className="chip normal-case tracking-normal">
+                    {t(module)}
                   </li>
                 ))}
               </ul>
@@ -178,7 +184,7 @@ export default function ScopeDiagnoser() {
               href="#solutions"
               className="group mt-4 inline-flex items-center gap-1.5 swiss-index swiss-index-strong"
             >
-              Lihat diagram arsitektur
+              {t(ui.diagnoser.viewDiagram)}
               <ArrowUpRight
                 className="h-3 w-3 transition-transform duration-300 ease-editorial group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 strokeWidth={2}
@@ -190,7 +196,7 @@ export default function ScopeDiagnoser() {
         <div className="mt-4 flex items-center gap-2 border-t border-[var(--border)] pt-3.5">
           <Cpu className="h-3 w-3 shrink-0 text-[var(--text-muted)]" strokeWidth={1.8} />
           <p className="font-mono text-[9.5px] uppercase leading-relaxed tracking-[0.14em] text-[var(--text-muted)]">
-            Diagnosis instan · tanpa registrasi
+            {t(ui.diagnoser.footnote)}
           </p>
         </div>
       </div>
@@ -212,7 +218,7 @@ function OptionPill({
       type="button"
       onClick={onSelect}
       aria-pressed={active}
-      whileTap={{ scale: 0.94 }}
+      whileTap={{ scale: 0.96 }}
       transition={SPRING_TAP}
       className={`shrink-0 rounded-full border px-3.5 py-2 text-[11px] font-medium transition-colors duration-300 ease-editorial ${
         active

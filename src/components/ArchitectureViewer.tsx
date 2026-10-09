@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowDown, ArrowRight, Radio, Waypoints } from 'lucide-react';
 import { archFlows, archNodes, diagnosticOptions } from '../data/companyData';
+import { ui } from '../i18n/ui';
+import { useLanguage } from '../context/LanguageContext';
 import { useReducedMotion } from '../hooks';
 import { EDITORIAL, SPRING_TAP } from './ui';
 
@@ -26,6 +28,7 @@ import { EDITORIAL, SPRING_TAP } from './ui';
 export default function ArchitectureViewer() {
   const [flowId, setFlowId] = useState(archFlows[0].id);
   const reduced = useReducedMotion();
+  const { t, lang } = useLanguage();
   const flow = archFlows.find((item) => item.id === flowId) ?? archFlows[0];
 
   const path = flow.path
@@ -39,18 +42,18 @@ export default function ArchitectureViewer() {
         <span className="inline-flex items-center gap-2">
           <Waypoints className="h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={1.6} />
           <span className="font-display text-sm font-medium tracking-tight">
-            Live Architecture Viewer
+            {t(ui.architecture.title)}
           </span>
         </span>
         <span className="ml-auto flex items-center gap-2">
           <Radio className="h-3 w-3 text-[var(--accent)]" strokeWidth={2} />
-          <span className="swiss-index swiss-index-nowrap">Tracing</span>
+          <span className="swiss-index swiss-index-nowrap">{t(ui.architecture.tracing)}</span>
         </span>
       </header>
 
       <div className="border-b border-[var(--border)] px-4 py-4 sm:px-5">
-        <p className="swiss-index">Pilih masalah untuk melihat alur sistem</p>
-        <div role="tablist" aria-label="Pilih masalah bisnis" className="mt-3 flex flex-wrap gap-2">
+        <p className="swiss-index">{t(ui.architecture.pickProblem)}</p>
+        <div role="tablist" aria-label={t(ui.architecture.tabAria)} className="mt-3 flex flex-wrap gap-2">
           {archFlows.map((item) => {
             const active = item.id === flow.id;
             const option = diagnosticOptions.find((entry) => entry.id === item.id);
@@ -69,7 +72,7 @@ export default function ArchitectureViewer() {
                     : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
                 }`}
               >
-                {option?.label ?? item.id}
+                {option ? t(option.label) : item.id}
               </motion.button>
             );
           })}
@@ -78,9 +81,12 @@ export default function ArchitectureViewer() {
 
       <div className="p-4 sm:p-5">
         {/* Active path. `key` on the track restarts the connector animation
-            whenever the selection changes, which is the whole feedback loop. */}
+            whenever the selection changes, which is the whole feedback loop.
+            `lang` is in the key so switching locale re-plays the cascade — the
+            node labels change width, and a replay keeps the sequence from
+            appearing to arrive out of order. */}
         <motion.ol
-          key={flow.id}
+          key={`${flow.id}-${lang}`}
           initial="hidden"
           animate="show"
           className="flex flex-col xl:flex-row xl:items-stretch"
@@ -98,7 +104,7 @@ export default function ArchitectureViewer() {
             >
               <ArchNodeCard node={node} order={index} />
               {index < path.length - 1 ? (
-                <Connector next={path[index + 1]?.label ?? ''} animated={!reduced} />
+                <Connector next={t(path[index + 1].label)} animated={!reduced} />
               ) : null}
             </motion.li>
           ))}
@@ -106,7 +112,7 @@ export default function ArchitectureViewer() {
 
         {/* Nodes this problem does not touch. */}
         <div className="mt-4 border-t border-[var(--border)] pt-3.5">
-          <p className="swiss-index">Idle · tidak dipakai oleh alur ini</p>
+          <p className="swiss-index">{t(ui.architecture.idleLabel)}</p>
           <ul className="mt-2.5 flex flex-wrap gap-1.5">
             {idle.map((node) => {
               const Icon = node.icon;
@@ -116,7 +122,7 @@ export default function ArchitectureViewer() {
                   className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] text-[var(--text-muted)]"
                 >
                   <Icon className="h-3 w-3 shrink-0" strokeWidth={1.8} />
-                  <span className="truncate">{node.label}</span>
+                  <span className="truncate">{t(node.label)}</span>
                 </li>
               );
             })}
@@ -125,7 +131,7 @@ export default function ArchitectureViewer() {
 
         <AnimatePresence mode="wait" initial={false}>
           <motion.p
-            key={flow.id}
+            key={`${flow.id}-${lang}`}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
@@ -133,7 +139,7 @@ export default function ArchitectureViewer() {
             className="mt-4 flex items-start gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-[13px] leading-relaxed text-[var(--text-secondary)]"
           >
             <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--accent)]" strokeWidth={2} />
-            {flow.caption}
+            {t(flow.caption)}
           </motion.p>
         </AnimatePresence>
       </div>
@@ -146,7 +152,7 @@ const nodeVariants = {
   show: (index: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.34, ease: EDITORIAL, delay: index * 0.055 },
+    transition: { duration: 0.34, ease: EDITORIAL, delay: index * 0.05 },
   }),
 };
 
@@ -158,6 +164,7 @@ function ArchNodeCard({
   order: number;
 }) {
   const Icon = node.icon;
+  const { t } = useLanguage();
 
   return (
     <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-[var(--accent)]/50 bg-[var(--accent-soft)] px-3 py-3">
@@ -172,10 +179,10 @@ function ArchNodeCard({
           </span>
         </span>
         <span className="mt-1.5 block truncate font-mono text-[12px] font-medium leading-tight text-[var(--text-primary)]">
-          {node.label}
+          {t(node.label)}
         </span>
         <span className="mt-1 block truncate text-[10.5px] leading-tight text-[var(--text-secondary)]">
-          {node.role}
+          {t(node.role)}
         </span>
       </span>
     </div>
@@ -189,10 +196,12 @@ function ArchNodeCard({
  * so it never needs measuring and cannot push the layout around.
  */
 function Connector({ next, animated }: { next: string; animated: boolean }) {
+  const { t } = useLanguage();
+
   return (
     <span
       role="presentation"
-      aria-label={`alur ke ${next}`}
+      aria-label={`${t(ui.architecture.flowTo)} ${next}`}
       className="relative flex h-5 shrink-0 items-center justify-center xl:h-auto xl:w-5"
     >
       <span className="relative flex h-full w-5 items-center justify-center xl:h-px xl:w-full">

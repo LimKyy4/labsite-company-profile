@@ -151,12 +151,16 @@ type MagneticApi = {
 /**
  * Subtle magnetic lean toward the cursor. Auto-disabled for coarse pointers
  * (touch) and for users who asked for reduced motion.
+ *
+ * Springs match the page-wide SPRING budget (220/24). The magnetic is already
+ * a small movement, so an under-damped spring here is what produced the
+ * "nervous button" feel — the element kept moving after the cursor had left.
  */
 export function useMagnetic(strength = 0.22): MagneticApi {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 240, damping: 22, mass: 0.6 });
-  const sy = useSpring(y, { stiffness: 240, damping: 22, mass: 0.6 });
+  const sx = useSpring(x, { stiffness: 220, damping: 24, mass: 0.85 });
+  const sy = useSpring(y, { stiffness: 220, damping: 24, mass: 0.85 });
 
   const coarse = useMediaQuery('(hover: none)');
   const reduced = useReducedMotion();

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { belief, focus, sectionIndex } from '../data/companyData';
+import { ui } from '../i18n/ui';
+import { useLanguage } from '../context/LanguageContext';
 import { useMediaQuery } from '../hooks';
 import {
   EDITORIAL,
@@ -10,12 +12,14 @@ import {
   RevealItem,
   Section,
   SnapRail,
+  SPRING,
   SPRING_TAP,
 } from './ui';
 
 export default function FocusBelief() {
   const [active, setActive] = useState(0);
   const wide = useMediaQuery('(min-width: 640px)');
+  const { t, lang } = useLanguage();
   const current = focus.stages[active];
 
   return (
@@ -24,23 +28,23 @@ export default function FocusBelief() {
       index={sectionIndex.focus.index}
       label={sectionIndex.focus.label}
       invert
-      title={<>{focus.headline}</>}
-      description="Empat tahap yang selalu kami jalankan, apa pun masalah yang dibawa klien — dari audit lapangan sampai sistem yang siap bertumbuh."
+      title={<>{t(focus.headline)}</>}
+      description={t(ui.focus.description)}
     >
       <div className="mt-fluid-lg grid grid-cols-12 gap-4">
         {wide ? (
           <RevealGroup className="col-span-12 grid gap-3 sm:grid-cols-2 lg:col-span-7">
             {focus.stages.map((stage, index) => (
-              <RevealItem key={stage.name}>
+              <RevealItem key={stage.id}>
                 <FocusCard stage={stage} active={index === active} onSelect={() => setActive(index)} />
               </RevealItem>
             ))}
           </RevealGroup>
         ) : (
           <div className="col-span-12">
-            <SnapRail label="Empat tahap fokus" onActiveChange={setActive}>
+            <SnapRail label={t(ui.focus.railLabel)} onActiveChange={setActive}>
               {focus.stages.map((stage, index) => (
-                <div key={stage.name} className="rail-slide">
+                <div key={stage.id} className="rail-slide">
                   <FocusCard stage={stage} active={index === active} onSelect={() => setActive(index)} />
                 </div>
               ))}
@@ -52,25 +56,28 @@ export default function FocusBelief() {
           <RevealItem>
             <AnimatePresence mode="wait">
               <motion.div
-                key={current.name}
-                initial={{ opacity: 0, y: 14 }}
+                key={`${current.id}-${lang}`}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3, ease: EDITORIAL }}
                 className="rounded-2xl border border-[var(--accent)] bg-[var(--accent-soft)] p-6 sm:p-8"
               >
-                <p className="swiss-index swiss-index-strong">Tahap {current.step}</p>
+                <p className="swiss-index swiss-index-strong">
+                  {t(ui.focus.stagePrefix)}
+                  {current.step}
+                </p>
                 <h3 className="mt-3 font-display text-fluid-2xl font-semibold tracking-tight text-[var(--text-primary)]">
-                  {current.name}
+                  {t(current.name)}
                 </h3>
                 <p className="mt-3 max-w-[58ch] text-pretty text-sm leading-relaxed text-[var(--text-secondary)]">
-                  {current.description}
+                  {t(current.description)}
                 </p>
                 <a
                   href="#approach"
                   className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)]"
                 >
-                  Lihat tahap metodologinya
+                  {t(ui.focus.methodologyLink)}
                   <ArrowRight
                     className="h-4 w-4 transition-transform duration-300 ease-editorial group-hover:translate-x-1"
                     strokeWidth={2}
@@ -83,16 +90,16 @@ export default function FocusBelief() {
           <RevealItem className="flex-1">
             <figure className="flex h-full flex-col justify-between rounded-2xl border border-[var(--border)] p-6 sm:p-8">
               <div>
-                <p className="swiss-index">Our Belief</p>
-                <blockquote className="mt-4 border-l-2 border-[var(--accent)] pl-5 max-w-[40ch] text-pretty font-display text-fluid-xl font-medium leading-snug tracking-tight text-[var(--text-primary)]">
-                  {belief.quote}
+                <p className="swiss-index">{t(ui.focus.beliefEyebrow)}</p>
+                <blockquote className="mt-4 max-w-[40ch] border-l-2 border-[var(--accent)] pl-5 text-pretty font-display text-fluid-xl font-medium leading-snug tracking-tight text-[var(--text-primary)]">
+                  {t(belief.quote)}
                 </blockquote>
               </div>
               <ul className="mt-6 space-y-3 border-t border-[var(--border)] pt-5">
                 {belief.points.map((point) => (
-                  <li key={point} className="flex max-w-[62ch] gap-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+                  <li key={point.id} className="flex max-w-[62ch] gap-3 text-sm leading-relaxed text-[var(--text-secondary)]">
                     <span className="mt-2.5 h-px w-3 shrink-0 bg-[var(--accent)]" aria-hidden />
-                    <span>{point}</span>
+                    <span>{t(point)}</span>
                   </li>
                 ))}
               </ul>
@@ -114,13 +121,14 @@ function FocusCard({
   onSelect: () => void;
 }) {
   const Icon = stage.icon;
+  const { t } = useLanguage();
 
   return (
     <motion.button
       type="button"
       onClick={onSelect}
       aria-pressed={active}
-      whileTap={{ scale: 0.975 }}
+      whileTap={{ scale: 0.985 }}
       transition={SPRING_TAP}
       className={`group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border bg-[var(--bg-elevated)] p-6 text-left transition-colors duration-300 ease-editorial hover:border-[var(--accent)] ${
         active ? 'border-[var(--accent)]' : 'border-[var(--border)]'
@@ -130,7 +138,7 @@ function FocusCard({
         <motion.span
           layoutId="focus-rail"
           className="absolute inset-y-0 left-0 w-[3px] bg-[var(--accent)]"
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          transition={SPRING}
         />
       ) : null}
 
@@ -146,10 +154,10 @@ function FocusCard({
           active ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'
         }`}
       >
-        {stage.name}
+        {t(stage.name)}
       </h3>
       <p className="mt-2 max-w-[48ch] text-sm leading-relaxed text-[var(--text-secondary)]">
-        {stage.description}
+        {t(stage.description)}
       </p>
     </motion.button>
   );

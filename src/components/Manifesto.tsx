@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
 import { Check, Quote } from 'lucide-react';
-import { manifesto, manifestoMarquee, sectionIndex } from '../data/companyData';
-import { Marquee } from './Marquee';
+import { manifesto, sectionIndex } from '../data/companyData';
+import { ui } from '../i18n/ui';
+import { useLanguage } from '../context/LanguageContext';
+import DualKineticMarquee from './DualKineticMarquee';
 import { EDITORIAL, Hairline, Reveal, RevealGroup, RevealItem, StickyIndex } from './ui';
 
 /**
@@ -12,6 +14,8 @@ import { EDITORIAL, Hairline, Reveal, RevealGroup, RevealItem, StickyIndex } fro
  * of inheriting whichever theme the visitor happens to be in.
  */
 export default function Manifesto() {
+  const { t } = useLanguage();
+
   return (
     // NB: no `overflow-hidden` here. It would make this section its own
     // scrollport, and a sticky descendant then resolves `top` against that
@@ -29,19 +33,17 @@ export default function Manifesto() {
             <Reveal delay={0.05}>
               <p className="swiss-index swiss-index-strong flex items-center gap-2">
                 <Quote className="h-3 w-3" strokeWidth={2} />
-                Cara kami menulis kode
+                {t(ui.manifesto.eyebrow)}
               </p>
               <h2 className="mt-fluid-sm max-w-[15ch] text-balance font-editorial text-fluid-5xl font-bold leading-[1.02] tracking-tight text-[var(--text-primary)]">
-                Tiga aturan yang tidak kami kompromikan.
+                {t(ui.manifesto.title)}
               </h2>
             </Reveal>
           </div>
 
           <Reveal delay={0.12} className="col-span-12 lg:col-span-5">
-            <p className="max-w-[46ch] text-pretty text-fluid-base leading-relaxed text-[var(--text-secondary)]">
-              Aturan ini yang menentukan bentuk kode yang kami serahkan. Bukan preferensi
-              estetika — ini batasan teknis yang menjaga sistem Anda tetap cepat, aman, dan bisa
-              tumbuh.
+            <p className="max-w-[46ch] text-pretty text-fluid-base leading-relaxed text-[var(--text-secondary)] lg:pb-1">
+              {t(ui.manifesto.description)}
             </p>
           </Reveal>
         </div>
@@ -55,18 +57,9 @@ export default function Manifesto() {
         </RevealGroup>
       </div>
 
-      {/* Seamless capability ticker — the engineering vocabulary, endlessly
+      {/* Dual-lane kinetic badges — the engineering vocabulary, endlessly
           reasserted while the manifesto is on screen. */}
-      <div className="relative mt-fluid-xl border-y border-[var(--border)] py-3">
-        <Marquee duration={42} itemClassName="swiss-index whitespace-nowrap">
-          {manifestoMarquee.map((mark) => (
-            <span key={mark} className="flex items-center gap-3">
-              <span>{mark}</span>
-              <span className="inline-block h-1 w-1 rotate-45 bg-[var(--accent)]" aria-hidden />
-            </span>
-          ))}
-        </Marquee>
-      </div>
+      <DualKineticMarquee />
     </section>
   );
 }
@@ -79,6 +72,7 @@ function ManifestoCard({
   index: number;
 }) {
   const Icon = pillar.icon;
+  const { t } = useLanguage();
 
   return (
     <article className="group relative flex h-full flex-col bg-[var(--bg-elevated)] p-6 transition-colors duration-500 ease-editorial hover:bg-[var(--accent-soft)] sm:p-7 lg:p-8">
@@ -96,23 +90,23 @@ function ManifestoCard({
           <Icon className="h-5 w-5" strokeWidth={1.6} />
         </span>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)]">
-          {pillar.tagline}
+          {t(pillar.tagline)}
         </span>
       </div>
 
       <h3 className="relative mt-5 font-display text-fluid-xl font-semibold tracking-tight text-[var(--text-primary)]">
-        {pillar.title}
+        {t(pillar.title)}
       </h3>
 
       <p className="relative mb-7 mt-3 max-w-[42ch] text-pretty text-sm leading-relaxed text-[var(--text-secondary)]">
-        {pillar.body}
+        {t(pillar.body)}
       </p>
 
       <ul className="relative mt-auto flex flex-wrap gap-2 border-t border-[var(--border)] pt-5">
         {pillar.proof.map((item) => (
-          <li key={item} className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
+          <li key={item.id} className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
             <Check className="h-3 w-3 text-[var(--accent)]" strokeWidth={2.4} />
-            {item}
+            {t(item)}
           </li>
         ))}
       </ul>

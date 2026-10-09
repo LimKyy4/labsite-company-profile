@@ -6,16 +6,46 @@ import { useMagnetic } from '../hooks';
 export const EDITORIAL = [0.16, 1, 0.3, 1] as const;
 export const SWIFT = [0.32, 0.72, 0, 1] as const;
 
-export const SPRING = { type: 'spring', stiffness: 300, damping: 30 } as const;
-export const SPRING_SNAPPY = { type: 'spring', stiffness: 420, damping: 32 } as const;
+/**
+ * Animation budget.
+ *
+ * One spring constant governs every interactive transition on the page
+ * (stiffness 220 / damping 24). Two reasons it is fixed rather than tuned per
+ * component:
+ *
+ * 1. Coherence. A pill that arrives with one spring and a drawer with another
+ *    reads as two different products stitched together, even when neither is
+ *    individually wrong.
+ * 2. Damping ratio. zeta = c / (2*sqrt(k*m)) = 24 / (2*sqrt(220*0.85)) ≈ 0.91 —
+ *    critically damped. It settles without a single overshoot frame, which is
+ *    what "elegant" actually looks like: motion that terminates rather than
+ *    bounces. Every earlier value in this file (300/30, 420/32, 520/30) was
+ *    under-damped and produced a visible bounce on touch-down.
+ */
+export const SPRING = { type: 'spring', stiffness: 220, damping: 24, mass: 0.85 } as const;
 
-/** Scroll-in reveal. Underdamped enough to overshoot a hair, never enough to wobble. */
-export const SPRING_REVEAL = { type: 'spring', stiffness: 260, damping: 26, mass: 0.9 } as const;
-/** Touch-down feedback: fast, no visible overshoot — a bounce here reads as a glitch. */
-export const SPRING_TAP = { type: 'spring', stiffness: 520, damping: 30, mass: 0.5 } as const;
+/** Layout-indicator spring: same settle, slightly quicker to hand off focus. */
+export const SPRING_SNAPPY = { type: 'spring', stiffness: 260, damping: 26, mass: 0.8 } as const;
+
+/** Scroll-in reveal. Matches SPRING so a card never lands differently than its frame. */
+export const SPRING_REVEAL = { type: 'spring', stiffness: 220, damping: 24, mass: 0.85 } as const;
+
+/**
+ * Touch-down feedback. Deliberately near-critically damped and fast: a bounce
+ * here reads as a glitch, not as delight. Scale overshoot is capped at 2% so
+ * the press is felt rather than seen.
+ */
+export const SPRING_TAP = { type: 'spring', stiffness: 420, damping: 34, mass: 0.5 } as const;
+
+/**
+ * Scroll-reveal travel is 18px, not the 40–60px that reads as "entering".
+ * Below ~12px the motion is invisible; above ~24px it competes with the reading
+ * eye and makes a grid feel like it is still loading. 18px reads as expensive.
+ */
+export const REVEAL_Y = 18;
 
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 22 },
+  hidden: { opacity: 0, y: REVEAL_Y },
   show: { opacity: 1, y: 0, transition: SPRING_REVEAL },
 };
 
@@ -25,29 +55,29 @@ export const fadeIn: Variants = {
 };
 
 export const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.97 },
+  hidden: { opacity: 0, scale: 0.985 },
   show: { opacity: 1, scale: 1, transition: SPRING_REVEAL },
 };
 
 /** Page-load sequence for the hero column. */
 export const welcomeSequence: Variants = {
   hidden: {},
-  show: { transition: { delayChildren: 0.1, staggerChildren: 0.085 } },
+  show: { transition: { delayChildren: 0.1, staggerChildren: 0.075 } },
 };
 
 export const welcomeItem: Variants = {
-  hidden: { opacity: 0, y: 20, scale: 0.985 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 26, mass: 0.9 } },
+  hidden: { opacity: 0, y: REVEAL_Y, scale: 0.99 },
+  show: { opacity: 1, y: 0, scale: 1, transition: SPRING_REVEAL },
 };
 
 /** Container that staggers <RevealItem> children on scroll. */
 export const revealGroup: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.07, delayChildren: 0.04 } },
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.04 } },
 };
 
 export const revealItem: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: REVEAL_Y },
   show: { opacity: 1, y: 0, transition: SPRING_REVEAL },
 };
 
@@ -296,14 +326,19 @@ export function SnapRail({
       </div>
 
       {indicator === 'bar' && total > 1 ? (
-        <div className="mt-fluid-sm flex items-center gap-4">
+        /* The `02 / 06` readout sits on the same 1px baseline grid as every
+           other rule on the page, so it needs its own band of air or the
+           numeral's descenders touch the progress hairline and the whole
+           indicator reads as clipped. 14px above + 10px below puts the digits
+           in a clear lane while still grouping them with the bar. */
+        <div className="mt-3.5 flex items-center gap-4 pb-2.5">
           <div className="relative h-px flex-1 bg-[var(--border)]">
             <motion.div
               className="absolute inset-0 origin-left bg-[var(--accent)]"
               style={{ scaleX }}
             />
           </div>
-          <span className="swiss-index swiss-index-nowrap tabular">
+          <span className="swiss-index swiss-index-nowrap tabular pl-1">
             <span className="text-[var(--text-primary)]">
               {String(active + 1).padStart(2, '0')}
             </span>
@@ -329,6 +364,7 @@ export function Section({
   children,
   className = '',
   headingClassName = '',
+  headingTitleClassName = '',
   invert = false,
   topRule = true,
 }: {
@@ -339,7 +375,10 @@ export function Section({
   description?: ReactNode;
   children: ReactNode;
   className?: string;
+  /** Applied to the <Reveal> that wraps the heading block. */
   headingClassName?: string;
+  /** Applied to the <h2> itself, for per-section heading overrides. */
+  headingTitleClassName?: string;
   invert?: boolean;
   topRule?: boolean;
 }) {
@@ -355,7 +394,14 @@ export function Section({
         {index && label ? <StickyIndex index={index} label={label} /> : null}
         {title ? (
           <Reveal delay={0.05} className={`mt-fluid-md ${headingClassName}`}>
-            <h2 className="max-w-4xl text-balance text-fluid-5xl font-semibold leading-[0.95] text-[var(--text-primary)]">
+            {/*
+              `headingTitleClassName` is merged after the defaults so a section
+              can widen the measure (`max-w-*`) or re-tune the tracking without
+              restating the whole type scale.
+            */}
+            <h2
+              className={`max-w-4xl text-balance text-fluid-5xl font-semibold leading-[0.95] text-[var(--text-primary)] ${headingTitleClassName}`}
+            >
               {title}
             </h2>
             {description ? (
@@ -387,8 +433,11 @@ export function Card({
   return (
     <motion.div
       className={cls}
-      whileHover={{ y: -4 }}
-      whileTap={{ scale: 0.975 }}
+      /* 2px, not 4: at 4px the card visibly detaches from the hairline grid it
+         is supposed to sit on, and a grid of six such cards reads as a page
+         mid-transition rather than a settled layout. */
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.985 }}
       transition={SPRING_TAP}
     >
       {children}

@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, ExternalLink, Lock } from 'lucide-react';
 import { projects, sectionIndex, type Project } from '../data/companyData';
+import { ui } from '../i18n/ui';
+import { useLanguage } from '../context/LanguageContext';
 import { EDITORIAL, Hairline, Reveal, RevealGroup, RevealItem, SPRING, StickyIndex } from './ui';
 
 type View = 'challenges' | 'solutions';
 
-const views: { id: View; label: string }[] = [
-  { id: 'challenges', label: 'Hambatan Klien' },
-  { id: 'solutions', label: 'Yang Kami Bangun' },
-];
-
 export default function Projects() {
   const [view, setView] = useState<View>('solutions');
+  const { t } = useLanguage();
+
+  const views: { id: View; label: string }[] = [
+    { id: 'challenges', label: t(ui.projects.viewChallenges) },
+    { id: 'solutions', label: t(ui.projects.viewSolutions) },
+  ];
 
   return (
     <section id="work" className="surface relative py-section">
@@ -22,18 +25,17 @@ export default function Projects() {
         <StickyIndex index={sectionIndex.work.index} label={sectionIndex.work.label} />
         <Reveal delay={0.05} className="mt-fluid-md flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="max-w-[16ch] text-balance text-fluid-5xl font-semibold leading-[0.95] tracking-tight text-[var(--text-primary)]">
-              Dua sistem yang bisa Anda buka sendiri.
+            <h2 className="max-w-[17ch] text-balance text-fluid-5xl font-semibold leading-[0.95] tracking-tight text-[var(--text-primary)]">
+              {t(ui.projects.title)}
             </h2>
             <p className="mt-4 max-w-2xl text-pretty text-fluid-base leading-relaxed text-[var(--text-secondary)]">
-              Keduanya masih live di environment publik. Periksalah sendiri kecepatannya, alur
-              datanya, dan apakah masalah yang Anda bawa benar-benar terjawab.
+              {t(ui.projects.description)}
             </p>
           </div>
 
           <div
             role="group"
-            aria-label="Mode tampilan studi kasus"
+            aria-label={t(ui.projects.viewAria)}
             className="inline-flex shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] p-1"
           >
             {views.map((item) => {
@@ -44,7 +46,7 @@ export default function Projects() {
                   type="button"
                   onClick={() => setView(item.id)}
                   aria-pressed={isActive}
-                  className={`relative rounded-full px-5 py-2.5 text-xs font-medium transition-colors duration-300 ${
+                  className={`relative rounded-full px-4 py-2.5 text-xs font-medium transition-colors duration-300 lg:px-5 ${
                     isActive
                       ? 'text-[var(--accent-contrast)]'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -77,11 +79,12 @@ export default function Projects() {
 }
 
 function ProjectShowcase({ project, view }: { project: Project; view: View }) {
+  const { t, lang } = useLanguage();
   const host = project.liveUrl.replace(/^https?:\/\//, '').replace(/\?.*$/, '');
   const items = view === 'challenges' ? project.challenges : project.solutions;
 
   return (
-    <article className="card card-hover flex h-full flex-col overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1">
+    <article className="card card-hover flex h-full flex-col overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-0.5">
       {/* macOS window chrome */}
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-[var(--accent-soft)] px-4 py-3">
         <div className="flex items-center gap-1.5" aria-hidden>
@@ -97,7 +100,7 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
           href={project.liveUrl}
           target="_blank"
           rel="noreferrer"
-          aria-label={`Buka ${project.name} di tab baru`}
+          aria-label={`${t(ui.projects.openTab)}: ${project.name}`}
           className="shrink-0 text-[var(--text-muted)] transition-colors duration-300 hover:text-[var(--accent)]"
         >
           <ExternalLink className="h-4 w-4" strokeWidth={1.6} />
@@ -107,7 +110,7 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
       {/* Schematic preview of the delivered interface.
           TODO: replace with real product screenshots once available. */}
       <div className="border-b border-[var(--border)] bg-[var(--bg)] p-5">
-        <p className="swiss-index">{project.preview.headline}</p>
+        <p className="swiss-index">{t(project.preview.headline)}</p>
         <div className="mt-4 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]">
           <div className="flex items-center gap-2 border-b border-[var(--border)] px-3 py-2">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
@@ -119,7 +122,7 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
             {project.preview.blocks.map((block) => (
               <div key={block.id} className="bg-[var(--bg-elevated)] px-3 py-4">
                 <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                  {block.name}
+                  {t(block.name)}
                 </p>
                 <p className="mt-1.5 font-display text-sm font-semibold tabular text-[var(--text-primary)]">
                   {block.metric}
@@ -141,38 +144,38 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
 
       <div className="flex flex-1 flex-col p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className="chip">{project.industry}</span>
-          <span className="swiss-index">{project.category}</span>
+          <span className="chip">{t(project.industry)}</span>
+          <span className="swiss-index">{t(project.category)}</span>
         </div>
 
         <h3 className="mt-6 font-display text-fluid-2xl font-semibold tracking-tight text-[var(--text-primary)]">
           {project.name}
         </h3>
         <p className="mt-3 max-w-[58ch] text-pretty text-sm leading-relaxed text-[var(--text-secondary)]">
-          {project.summary}
+          {t(project.summary)}
         </p>
 
         <div className="mt-7 min-h-[10.5rem] rounded-xl border border-[var(--border)] bg-[var(--bg)] p-5">
           <p className="swiss-index">
-            {view === 'challenges' ? 'Hambatan yang ditemukan' : 'Yang kami bangun'}
+            {view === 'challenges' ? t(ui.projects.challengesHeading) : t(ui.projects.solutionsHeading)}
           </p>
           <AnimatePresence mode="wait">
             <motion.ul
-              key={`${project.id}-${view}`}
-              initial={{ opacity: 0, x: 20 }}
+              key={`${project.id}-${view}-${lang}`}
+              initial={{ opacity: 0, x: 18 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              exit={{ opacity: 0, x: -18 }}
               transition={{ duration: 0.26, ease: EDITORIAL }}
               className="mt-4 space-y-2.5"
             >
               {items.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
+                <li key={item.id} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
                   {view === 'challenges' ? (
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#B4483A]" strokeWidth={1.6} />
                   ) : (
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={1.6} />
                   )}
-                  {item}
+                  {t(item)}
                 </li>
               ))}
             </motion.ul>
@@ -181,8 +184,8 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
 
         <div className="mt-6 flex flex-wrap gap-2">
           {project.stack.map((tech) => (
-            <span key={tech} className="chip normal-case tracking-normal">
-              {tech}
+            <span key={tech.id} className="chip normal-case tracking-normal">
+              {t(tech)}
             </span>
           ))}
         </div>
@@ -195,7 +198,7 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
           rel="noreferrer"
           className="btn-secondary w-full text-xs"
         >
-          Kunjungi Website Live
+          {t(ui.projects.visitSite)}
           <ExternalLink className="h-3.5 w-3.5" strokeWidth={2} />
         </a>
       </div>

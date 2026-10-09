@@ -431,8 +431,21 @@
     animation: marquee-slide var(--marquee-duration, 38s) linear infinite;
   }
 
+  /*
+   * Pause scope.
+
+   * `:hover` alone is per-lane, which is wrong for a multi-lane strip: hovering
+   * the top row left the bottom row still running, so the strip kept moving
+   * under the cursor and the "pause" felt broken.
+
+   * `[data-marquee-strip]` is the wrapper around *all* lanes, so hovering
+   * anywhere in the strip stops every track, and `.marquee:hover` still covers
+   * the single-lane case. `:focus-within` is kept on the lane itself because
+   * keyboard focus belongs to the item that was reached, not to a sibling row.
+   */
   .marquee:hover .marquee-track,
-  .marquee:focus-within .marquee-track {
+  .marquee:focus-within .marquee-track,
+  [data-marquee-strip]:hover .marquee-track {
     animation-play-state: paused;
   }
 
