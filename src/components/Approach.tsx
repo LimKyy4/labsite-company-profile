@@ -1,4 +1,4 @@
-﻿import { useRef, useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { CheckCircle2, Package } from 'lucide-react';
 import { approach, sectionIndex } from '../data/companyData';
@@ -219,14 +219,14 @@ function DetailPanel({ current }: { current: (typeof approach)[number] }) {
 
           <div className="bg-[var(--accent-soft)] p-6 lg:p-8">
             <p className="swiss-index swiss-index-strong flex items-center gap-2">
-              <Package className="h-3 w-3" strokeWidth={2} />
+              <Package className="icon-optical h-3 w-3" strokeWidth={2} />
               {t(ui.approach.deliverable)}
             </p>
             <p className="mt-3 max-w-[46ch] text-pretty text-sm leading-relaxed text-[var(--text-primary)]">
               {t(current.deliverable)}
             </p>
             <p className="mt-5 flex items-start gap-2 border-t border-[var(--border)] pt-4 text-xs leading-relaxed text-[var(--text-secondary)]">
-              <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--accent)]" strokeWidth={2} />
+              <CheckCircle2 className="icon-optical mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--accent)]" strokeWidth={2} />
               {t(ui.approach.approvalNote)}
             </p>
           </div>

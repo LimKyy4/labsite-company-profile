@@ -40,20 +40,20 @@ export default function ArchitectureViewer() {
     <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)]">
       <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-[var(--border)] px-4 py-3 sm:px-5">
         <span className="inline-flex items-center gap-2">
-          <Waypoints className="h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={1.6} />
+          <Waypoints className="icon-optical h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={1.6} />
           <span className="font-display text-sm font-medium tracking-tight">
             {t(ui.architecture.title)}
           </span>
         </span>
         <span className="ml-auto flex items-center gap-2">
-          <Radio className="h-3 w-3 text-[var(--accent)]" strokeWidth={2} />
+          <Radio className="icon-optical h-3 w-3 text-[var(--accent)]" strokeWidth={2} />
           <span className="swiss-index swiss-index-nowrap">{t(ui.architecture.tracing)}</span>
         </span>
       </header>
 
       <div className="border-b border-[var(--border)] px-4 py-4 sm:px-5">
         <p className="swiss-index">{t(ui.architecture.pickProblem)}</p>
-        <div role="tablist" aria-label={t(ui.architecture.tabAria)} className="mt-3 flex flex-wrap gap-2">
+        <div role="group" aria-label={t(ui.architecture.tabAria)} className="mt-3 flex flex-wrap gap-2">
           {archFlows.map((item) => {
             const active = item.id === flow.id;
             const option = diagnosticOptions.find((entry) => entry.id === item.id);
@@ -61,12 +61,11 @@ export default function ArchitectureViewer() {
               <motion.button
                 key={item.id}
                 type="button"
-                role="tab"
-                aria-selected={active}
+                aria-pressed={active}
                 onClick={() => setFlowId(item.id)}
-                whileTap={{ scale: 0.96 }}
+                whileTap={{ scale: 0.97 }}
                 transition={SPRING_TAP}
-                className={`rounded-full border px-3.5 py-2 text-[11px] font-medium transition-colors duration-300 ease-editorial ${
+                className={`flex min-h-[var(--touch)] items-center rounded-full border px-3.5 py-2 text-[11px] font-medium transition-colors duration-300 ease-editorial active:scale-[0.97] ${
                   active
                     ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-contrast)]'
                     : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'
@@ -121,7 +120,7 @@ export default function ArchitectureViewer() {
                   key={node.id}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-[11px] text-[var(--text-muted)]"
                 >
-                  <Icon className="h-3 w-3 shrink-0" strokeWidth={1.8} />
+                  <Icon className="icon-optical h-3 w-3 shrink-0" strokeWidth={1.8} />
                   <span className="truncate">{t(node.label)}</span>
                 </li>
               );
@@ -138,7 +137,7 @@ export default function ArchitectureViewer() {
             transition={{ duration: 0.28, ease: EDITORIAL }}
             className="mt-4 flex items-start gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-[13px] leading-relaxed text-[var(--text-secondary)]"
           >
-            <ArrowRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--accent)]" strokeWidth={2} />
+            <ArrowRight className="icon-optical mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--accent)]" strokeWidth={2} />
             {t(flow.caption)}
           </motion.p>
         </AnimatePresence>
@@ -169,7 +168,7 @@ function ArchNodeCard({
   return (
     <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-[var(--accent)]/50 bg-[var(--accent-soft)] px-3 py-3">
       <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--accent)]/40 text-[var(--accent)]">
-        <Icon className="h-4 w-4" strokeWidth={1.6} />
+        <Icon className="icon-optical h-4 w-4" strokeWidth={1.6} />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1.5">

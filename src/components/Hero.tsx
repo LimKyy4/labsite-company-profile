@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, Boxes, Cpu, ShieldCheck, Sparkles, Zap } from 'lucide-react';
 import { brand, engineeringMarks, heroStats, sectionIndex, systemStatus, type HeroStat } from '../data/companyData';
 import { ui } from '../i18n/ui';
@@ -49,7 +49,7 @@ export default function Hero() {
               wrong clause or dropping the emphasis. */}
           <motion.h1
             variants={welcomeItem}
-            className="mt-5 max-w-[22ch] text-balance text-[1.85rem] font-semibold leading-[1.04] tracking-[-0.03em] text-[var(--text-primary)] sm:mt-6 sm:text-fluid-4xl lg:max-w-[18ch] lg:text-fluid-5xl lg:leading-[0.98]"
+            className="mt-5 max-w-[24ch] text-balance text-[1.8rem] font-semibold leading-[1.05] tracking-[-0.03em] text-[var(--text-primary)] sm:mt-6 sm:text-fluid-4xl lg:max-w-[20ch] lg:text-fluid-5xl lg:leading-[0.98]"
           >
             {t(ui.hero.headlineLead)}{' '}
             <span className="text-[var(--accent)]">{t(ui.hero.headlineAccent)}</span>{' '}
@@ -131,7 +131,7 @@ export default function Hero() {
         {/* ── Proof strip ───────────────────────────────────────────── */}
         <motion.div variants={welcomeSequence} initial="hidden" animate="show" className="mt-fluid-xl">
           <div className="flex items-center gap-3">
-            <Sparkles className="h-3.5 w-3.5 shrink-0 text-[var(--accent)]" strokeWidth={1.8} />
+            <Sparkles className="icon-optical h-3.5 w-3.5 shrink-0 text-[var(--accent)]" strokeWidth={1.8} />
             <p className="swiss-index">{t(ui.hero.proofLabel)}</p>
           </div>
 

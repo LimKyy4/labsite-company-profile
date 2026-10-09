@@ -23,9 +23,12 @@ export default function Projects() {
 
       <div className="shell">
         <StickyIndex index={sectionIndex.work.index} label={sectionIndex.work.label} />
-        <Reveal delay={0.05} className="mt-fluid-md flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <Reveal
+          delay={0.05}
+          className="mt-fluid-md flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
+        >
           <div>
-            <h2 className="max-w-[17ch] text-balance text-fluid-5xl font-semibold leading-[0.95] tracking-tight text-[var(--text-primary)]">
+            <h2 className="max-w-[20ch] text-balance text-fluid-5xl font-semibold leading-[0.95] tracking-tight text-[var(--text-primary)]">
               {t(ui.projects.title)}
             </h2>
             <p className="mt-4 max-w-2xl text-pretty text-fluid-base leading-relaxed text-[var(--text-secondary)]">
@@ -46,7 +49,7 @@ export default function Projects() {
                   type="button"
                   onClick={() => setView(item.id)}
                   aria-pressed={isActive}
-                  className={`relative rounded-full px-4 py-2.5 text-xs font-medium transition-colors duration-300 lg:px-5 ${
+                  className={`relative flex min-h-[var(--touch)] items-center rounded-full px-4 py-2.5 text-xs font-medium transition-colors duration-300 active:scale-[0.97] lg:px-5 ${
                     isActive
                       ? 'text-[var(--accent-contrast)]'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -93,7 +96,7 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
           <span className="h-2.5 w-2.5 rounded-full bg-[#57A64A]" />
         </div>
         <div className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1">
-          <Lock className="h-2.5 w-2.5 shrink-0 text-[var(--text-muted)]" strokeWidth={2.5} />
+          <Lock className="icon-optical h-2.5 w-2.5 shrink-0 text-[var(--text-muted)]" strokeWidth={2.5} />
           <span className="truncate font-mono text-[11px] text-[var(--text-muted)]">{host}</span>
         </div>
         <a
@@ -101,9 +104,9 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
           target="_blank"
           rel="noreferrer"
           aria-label={`${t(ui.projects.openTab)}: ${project.name}`}
-          className="shrink-0 text-[var(--text-muted)] transition-colors duration-300 hover:text-[var(--accent)]"
+          className="-mr-1 inline-flex h-[var(--touch)] w-[var(--touch)] shrink-0 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors duration-300 hover:text-[var(--accent)] active:scale-[0.97]"
         >
-          <ExternalLink className="h-4 w-4" strokeWidth={1.6} />
+          <ExternalLink className="icon-optical h-4 w-4" strokeWidth={1.6} />
         </a>
       </div>
 
@@ -155,7 +158,10 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
           {t(project.summary)}
         </p>
 
-        <div className="mt-7 min-h-[10.5rem] rounded-xl border border-[var(--border)] bg-[var(--bg)] p-5">
+        {/* Reserved height. The two lists are near-identical in length, so
+            without a floor the card changes height when the toggle flips and
+            the whole grid below it jumps — the largest CLS source on the page. */}
+        <div className="mt-7 min-h-[11rem] rounded-xl border border-[var(--border)] bg-[var(--bg)] p-5">
           <p className="swiss-index">
             {view === 'challenges' ? t(ui.projects.challengesHeading) : t(ui.projects.solutionsHeading)}
           </p>
@@ -199,7 +205,7 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
           className="btn-secondary w-full text-xs"
         >
           {t(ui.projects.visitSite)}
-          <ExternalLink className="h-3.5 w-3.5" strokeWidth={2} />
+          <ExternalLink className="icon-optical h-3.5 w-3.5" strokeWidth={2} />
         </a>
       </div>
     </article>

@@ -74,15 +74,31 @@ export default function Navbar() {
 
       <nav
         aria-label={t(ui.nav.aria)}
-        className={`pointer-events-auto flex w-full max-w-5xl items-center gap-2 rounded-full border px-2.5 py-2 transition-all duration-500 ease-editorial sm:gap-3 sm:px-3.5 xl:max-w-[84rem] ${
+        /* `py-1` rather than `py-2`: the 44px theme button now sets the pill's
+           content height, and py-2 on top of that added 16px of dead space above
+           and below. The controls themselves carry the target size. */
+        /* 320px is the tight width: 44px theme + 44px menu + the ID/EN pair
+           already exceed the 320 - 16px of available pill width, so the wordmark
+           is dropped rather than letting the capsule overflow. The brand is
+           still in the footer, and `#top` is reachable from the drawer. */
+        className={`pointer-events-auto flex w-full max-w-5xl items-center gap-1.5 rounded-full border px-2 py-1 transition-all duration-500 ease-editorial sm:gap-2 sm:px-3 xl:max-w-[84rem] ${
           scrolled || open
             ? 'border-[var(--border)] bg-[var(--bg)]/92 shadow-pill backdrop-blur-xl'
             : 'border-transparent bg-transparent'
         }`}
       >
-        <a href="#top" className="group flex shrink-0 items-center gap-2 pl-1 pr-1 sm:gap-2.5 sm:pr-2">
+        {/* Below `xs` the 44px theme and menu buttons plus the ID/EN pair leave
+            no room for a wordmark without overflowing the capsule. The logo
+            mark alone survives: it is 28px and still reads as a mark, and the
+            wordmark returns in full from 360px up. */}
+        {/* `-my-1.5` extends the hit area to 44px vertically without adding visual
+            height to the capsule; the logo mark itself stays 28px. */}
+        <a
+          href="#top"
+          className="group -my-1.5 flex min-h-[var(--touch)] shrink-0 items-center gap-2 px-1 py-1.5 sm:gap-2.5 sm:pr-2"
+        >
           <CircuitLogo />
-          <span className="flex flex-col leading-none">
+          <span className="hidden flex-col leading-none min-[360px]:flex">
             <span className="font-display text-sm font-semibold tracking-tight sm:text-base">
               {brand.name}
             </span>
@@ -147,17 +163,18 @@ export default function Navbar() {
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
           <a
             href="#contact"
-            className="hidden items-center gap-1.5 rounded-full bg-[var(--accent)] px-3.5 py-2 font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--accent-contrast)] transition-colors duration-300 hover:bg-[var(--accent-hover)] xl:gap-2 xl:px-4 xl:text-[11px] md:inline-flex"
+            className="hidden min-h-[var(--touch)] items-center gap-1.5 rounded-full bg-[var(--accent)] px-4 py-2 font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--accent-contrast)] transition-colors duration-300 hover:bg-[var(--accent-hover)] active:scale-[0.97] xl:gap-2 xl:px-5 xl:text-[11px] md:inline-flex"
           >
             {t(ui.nav.cta)}
-            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.2} />
+            <ArrowRight className="icon-optical h-3.5 w-3.5" strokeWidth={2.2} />
           </a>
           <button
             type="button"
             onClick={() => setOpen((prev) => !prev)}
             aria-label={open ? t(ui.global.closeMenu) : t(ui.global.openMenu)}
             aria-expanded={open}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-primary)] transition-colors duration-300 hover:border-[var(--accent)] lg:hidden"
+            aria-controls={open ? 'nav-drawer' : undefined}
+            className="inline-flex h-[var(--touch)] w-[var(--touch)] shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text-primary)] transition-colors duration-300 hover:border-[var(--accent)] active:scale-[0.97] lg:hidden"
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -168,6 +185,7 @@ export default function Navbar() {
         {open ? (
           <motion.div
             key="pill-drawer"
+            id="nav-drawer"
             initial={{ opacity: 0, y: -16, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -14, scale: 0.98 }}
@@ -190,10 +208,10 @@ export default function Navbar() {
             <a
               href="#contact"
               onClick={() => setOpen(false)}
-              className="mt-2 flex items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-5 py-3 font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-[var(--accent-contrast)]"
+              className="mt-2 flex min-h-[var(--touch)] items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-5 py-3 font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-[var(--accent-contrast)] active:scale-[0.98]"
             >
               {t(ui.nav.drawerCta)}
-              <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.2} />
+              <ArrowRight className="icon-optical h-3.5 w-3.5" strokeWidth={2.2} />
             </a>
           </motion.div>
         ) : null}
@@ -250,7 +268,7 @@ function DrawerLinks({ onNavigate }: { onNavigate: () => void }) {
             <a
               href={`#${link.id}`}
               onClick={onNavigate}
-              className={`flex items-center justify-between border-b border-[var(--border)] px-4 py-3 font-mono text-[12px] uppercase tracking-[0.08em] transition-colors ${
+              className={`flex min-h-[var(--touch)] items-center justify-between border-b border-[var(--border)] px-4 py-3 font-mono text-[12px] uppercase tracking-[0.08em] transition-colors active:bg-[var(--accent-soft)] ${
                 isActive ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'
               }`}
             >
@@ -315,7 +333,7 @@ function LanguageSwitch() {
             onClick={() => setLang(code)}
             aria-pressed={isActive}
             lang={code}
-            className={`relative rounded-full px-2 py-1 font-mono text-[9.5px] font-medium uppercase tracking-[0.1em] transition-colors duration-300 xl:px-2.5 xl:text-[10px] ${
+            className={`relative -my-1 min-h-[var(--touch)] min-w-[var(--touch)] rounded-full px-1 py-1 font-mono text-[9.5px] font-medium uppercase tracking-[0.1em] transition-colors duration-300 xl:text-[10px] ${
               isActive
                 ? 'text-[var(--accent-contrast)]'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
@@ -345,7 +363,7 @@ function ThemeToggle({ theme, onToggle }: { theme: 'light' | 'dark'; onToggle: (
       type="button"
       onClick={onToggle}
       aria-label={isDark ? t(ui.global.themeToLight) : t(ui.global.themeToDark)}
-      className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] text-[var(--text-secondary)] transition-colors duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)]"
+      className="relative inline-flex h-[var(--touch)] w-[var(--touch)] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--border)] text-[var(--text-secondary)] transition-colors duration-300 hover:border-[var(--accent)] hover:text-[var(--accent)] active:scale-[0.97]"
     >
       <AnimatePresence initial={false} mode="wait">
         <motion.span

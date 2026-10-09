@@ -165,10 +165,10 @@ function MissionCard({
                       {t(mission.title)}
                     </span>
                     {isOpen ? (
-                      <Minus className="h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={2} />
+                      <Minus className="icon-optical h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={2} />
                     ) : (
                       <Plus
-                        className="h-4 w-4 shrink-0 text-[var(--text-muted)] transition-colors duration-300"
+                        className="icon-optical h-4 w-4 shrink-0 text-[var(--text-muted)] transition-colors duration-300"
                         strokeWidth={2}
                       />
                     )}

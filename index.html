@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#FAF8F5" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>LABSITE.ID — Professional IT Engineering Partner</title>
     <meta
@@ -12,23 +11,73 @@
     />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF8F5" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#120E0C" />
+
+    <!--
+      Pre-paint bootstrap.
+
+      Two jobs, both of which must happen before the first paint or the visitor
+      sees a flash:
+
+        1. Theme. The `dark` class has to be on <html> before React mounts, or
+           the page renders light and then snaps dark — a white flash on every
+           dark-mode load.
+
+        2. Language. `lang` is read from the same localStorage key the app
+           uses. Without this the document announces `lang="id"` while the
+           English UI is already rendered, so a screen reader picks the wrong
+           pronunciation rules until React's effect runs.
+
+      Both are written to attributes only, never to localStorage: this runs
+      before the app exists, and the app's effect is the single writer that
+      persists changes. Writing here too would create two sources of truth.
+    -->
     <script>
-      (function() {
+      (function () {
+        var root = document.documentElement;
         try {
-          const stored = localStorage.getItem('labsite-theme');
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          const theme = stored || (prefersDark ? 'dark' : 'light');
-          if (theme === 'dark') document.documentElement.classList.add('dark');
-          else document.documentElement.classList.remove('dark');
-        } catch (e) {}
+          var storedTheme = localStorage.getItem('labsite-theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = storedTheme || (prefersDark ? 'dark' : 'light');
+          root.classList.toggle('dark', theme === 'dark');
+          root.style.colorScheme = theme;
+
+          var storedLang = localStorage.getItem('labsite-lang');
+          if (storedLang === 'en' || storedLang === 'id') {
+            root.lang = storedLang;
+          }
+        } catch (e) {
+          /* private mode or storage disabled: defaults in the markup stand */
+        }
       })();
     </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!--
+      Fonts.
+
+      `display=swap` paints the metric-matched fallback immediately (see the
+      `size-adjust` declarations in index.css) so the swap is visually
+      seamless and layout-neutral. It also means the stylesheet itself must not
+      block first paint — a render-blocking font CSS request adds ~100ms of
+      blank screen on a cold cache, which is worse than the swap it protects.
+      Hence `media="print" onload="this.media='all'"`: non-blocking in every
+      browser that supports it, with a plain `<noscript>` stylesheet as the
+      fallback for the rest.
+    -->
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
   </head>
   <body>
     <div id="root"></div>

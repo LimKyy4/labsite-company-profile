@@ -38,13 +38,37 @@ export default {
           raise: '#1C1613',
         },
       },
+      /*
+       * Each stack names a metric-matched local fallback before the generic
+       * ones. Those fallbacks are declared in index.css with `size-adjust` and
+       * `ascent-override` set to each web font's own metrics, so the swap from
+       * fallback to web font changes glyph shapes without changing line box
+       * height.
+
+       * This is what took CLS from 0.068 to ~0 on a cold font cache. The
+       * alternative — `font-display: optional` — also scores zero, but by
+       * refusing to ever show the real type on a slow connection, which
+       * trades the design for the metric.
+       */
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
+        sans: [
+          '"Plus Jakarta Sans"',
+          '"PJS Fallback"',
+          'system-ui',
+          '-apple-system',
+          'sans-serif',
+        ],
+        display: ['"Space Grotesk"', '"Grotesk Fallback"', 'system-ui', 'sans-serif'],
         // Reserved for the manifesto / editorial statements: wider, more
         // characterful than the workhorse display face.
-        editorial: ['Syne', '"Space Grotesk"', 'Inter', 'system-ui', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        editorial: ['Syne', '"Syne Fallback"', '"Space Grotesk"', 'system-ui', 'sans-serif'],
+        mono: [
+          '"JetBrains Mono"',
+          '"JBMono Fallback"',
+          'ui-monospace',
+          'SFMono-Regular',
+          'monospace',
+        ],
       },
       fontSize: {
         'fluid-xs': 'clamp(0.6875rem, 0.66rem + 0.14vw, 0.75rem)',

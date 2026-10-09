@@ -75,11 +75,11 @@ export default function FocusBelief() {
                 </p>
                 <a
                   href="#approach"
-                  className="group mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)]"
+                  className="group mt-4 -my-2 inline-flex min-h-[var(--touch)] items-center gap-2 py-2 text-sm font-semibold text-[var(--accent)] active:scale-[0.99]"
                 >
                   {t(ui.focus.methodologyLink)}
                   <ArrowRight
-                    className="h-4 w-4 transition-transform duration-300 ease-editorial group-hover:translate-x-1"
+                    className="icon-optical h-4 w-4 transition-transform duration-300 ease-editorial group-hover:translate-x-1"
                     strokeWidth={2}
                   />
                 </a>

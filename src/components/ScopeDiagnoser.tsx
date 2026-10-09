@@ -47,7 +47,7 @@ export default function ScopeDiagnoser() {
   return (
     <div className="card overflow-hidden rounded-2xl">
       <header className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3 sm:px-5">
-        <Activity className="h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={1.6} />
+        <Activity className="icon-optical h-4 w-4 shrink-0 text-[var(--accent)]" strokeWidth={1.6} />
         <h2 className="font-display text-sm font-medium tracking-tight">{t(ui.diagnoser.title)}</h2>
         <span className="ml-auto flex items-center gap-2">
           <span className="status-pulse" aria-hidden />
@@ -87,7 +87,7 @@ export default function ScopeDiagnoser() {
         {/* ---- Input 2: how big is the operation ---- */}
         <fieldset className="mt-5">
           <legend className="swiss-index flex items-center gap-1.5">
-            <Scale className="h-3 w-3" strokeWidth={2} />
+            <Scale className="icon-optical h-3 w-3" strokeWidth={2} />
             {t(ui.diagnoser.legendScale)}
           </legend>
           <div className="mt-3 grid grid-cols-5 gap-1.5" role="radiogroup" aria-label={t(ui.diagnoser.scaleAria)}>
@@ -102,7 +102,7 @@ export default function ScopeDiagnoser() {
                   onClick={() => setScaleId(step.id)}
                   whileTap={{ scale: 0.96 }}
                   transition={SPRING_TAP}
-                  className={`relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-2.5 transition-colors duration-300 ${
+                  className={`relative flex min-h-[var(--touch)] min-w-0 flex-col items-center justify-center gap-1 rounded-lg border px-1 py-2.5 transition-colors duration-300 active:scale-[0.97] ${
                     active
                       ? 'border-[var(--accent)] text-[var(--accent-contrast)]'
                       : 'border-[var(--border)] text-[var(--text-secondary)]'
@@ -152,7 +152,7 @@ export default function ScopeDiagnoser() {
           >
             <div className="flex items-start gap-3">
               <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--accent)]/40 bg-[var(--bg-elevated)] text-[var(--accent)]">
-                <PillarIcon className="h-4 w-4" strokeWidth={1.7} />
+                <PillarIcon className="icon-optical h-4 w-4" strokeWidth={1.7} />
               </span>
               <div className="min-w-0">
                 <p className="swiss-index swiss-index-strong">{t(ui.diagnoser.recommendationTitle)}</p>
@@ -168,7 +168,7 @@ export default function ScopeDiagnoser() {
 
             <div className="mt-4 border-t border-[var(--border)] pt-3.5">
               <p className="swiss-index flex items-center gap-1.5">
-                <Layers className="h-3 w-3" strokeWidth={2} />
+                <Layers className="icon-optical h-3 w-3" strokeWidth={2} />
                 {t(ui.diagnoser.stackTitle)} {t(scale.label)}
               </p>
               <ul className="mt-2.5 flex flex-wrap gap-1.5">
@@ -182,11 +182,11 @@ export default function ScopeDiagnoser() {
 
             <a
               href="#solutions"
-              className="group mt-4 inline-flex items-center gap-1.5 swiss-index swiss-index-strong"
+              className="group mt-2 -my-2 inline-flex min-h-[var(--touch)] items-center gap-1.5 py-2 swiss-index swiss-index-strong"
             >
               {t(ui.diagnoser.viewDiagram)}
               <ArrowUpRight
-                className="h-3 w-3 transition-transform duration-300 ease-editorial group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                className="icon-optical h-3 w-3 transition-transform duration-300 ease-editorial group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 strokeWidth={2}
               />
             </a>
@@ -194,7 +194,7 @@ export default function ScopeDiagnoser() {
         </AnimatePresence>
 
         <div className="mt-4 flex items-center gap-2 border-t border-[var(--border)] pt-3.5">
-          <Cpu className="h-3 w-3 shrink-0 text-[var(--text-muted)]" strokeWidth={1.8} />
+          <Cpu className="icon-optical h-3 w-3 shrink-0 text-[var(--text-muted)]" strokeWidth={1.8} />
           <p className="font-mono text-[9.5px] uppercase leading-relaxed tracking-[0.14em] text-[var(--text-muted)]">
             {t(ui.diagnoser.footnote)}
           </p>
@@ -220,7 +220,7 @@ function OptionPill({
       aria-pressed={active}
       whileTap={{ scale: 0.96 }}
       transition={SPRING_TAP}
-      className={`shrink-0 rounded-full border px-3.5 py-2 text-[11px] font-medium transition-colors duration-300 ease-editorial ${
+      className={`flex min-h-[var(--touch)] shrink-0 items-center rounded-full border px-3.5 py-2 text-[11px] font-medium transition-colors duration-300 ease-editorial active:scale-[0.97] ${
         active
           ? 'border-[var(--accent)] bg-[var(--accent)] text-[var(--accent-contrast)]'
           : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]'

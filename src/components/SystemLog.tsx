@@ -69,6 +69,21 @@ export default function SystemLog() {
 
   return (
     <div
+      /*
+       * `aria-live="polite"`, never `assertive`.
+       *
+       * This region was previously absent by choice, on the reasoning that
+       * unsolicited announcements talk over the reader. That reasoning was half
+       * right: the problem is frequency and relevance, not the region itself.
+       * Rotation is already gated three ways — armed only after the hero scrolls
+       * away, paused on hover and focus, and disabled outright under reduced
+       * motion — so the announcements are sparse and contextually relevant.
+       * With no region at all, a screen-reader user had no way to know the
+       * panel existed. `aria-atomic="false"` keeps a replaced line announced as
+       * a new line rather than as a diff of the old one.
+       */
+      aria-live="polite"
+      aria-atomic="false"
       className="pointer-events-none fixed inset-x-3 bottom-3 z-40 flex flex-col items-start gap-2 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:items-end"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -100,7 +115,7 @@ export default function SystemLog() {
               aria-label={`${t(ui.systemLog.dismiss)}: ${t(entry.text)}`}
               className="-mr-1 -mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-primary)]"
             >
-              <X className="h-3 w-3" strokeWidth={2} />
+              <X className="icon-optical h-3 w-3" strokeWidth={2} />
             </button>
           </motion.div>
         ))}

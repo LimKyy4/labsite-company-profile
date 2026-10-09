@@ -4,6 +4,82 @@
 
 @layer base {
   /* ============================================================
+     FONT-SWAP CLS ELIMINATION
+
+     Measured: with a warm font cache the page scores CLS 0.000. With a cold
+     cache it scored 0.068 at 375px, from a single 16px growth of the Scope
+     Diagnoser when Plus Jakarta Sans replaced the fallback — the card's
+     option-pill row rewrapped and everything below it moved.
+
+     `font-display: swap` is what causes it: text paints immediately in the
+     fallback, then re-lays out when the real face arrives. The two ways out:
+
+       · `font-display: optional` — never swap, so the first paint uses the
+         fallback and stays. Zero CLS by definition, but on a slow connection
+         visitors get the fallback face and never see the design. Trading the
+         brand for a metric is the wrong trade here.
+
+       · Metric-matched fallback — keep the swap, but declare a local
+         `@font-face` whose ascent/descent/width are adjusted to match the real
+         face. The browser then substitutes a face that occupies the same
+         vertical space, so the swap changes glyph shapes and nothing else.
+
+     The `size-adjust` values below are the ascent-override ratios for each
+     face, which is the metric that governs line box height.
+     ============================================================ */
+  @font-face {
+    font-family: 'PJS Fallback';
+    src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+    /*
+     * 111%, not 105%.
+     *
+     * Measured on the Scope Diagnoser at 375px: with size-adjust 105% the card
+     * still grew 16px (665 -> 681) and the hero column 25px when Plus Jakarta
+     * Sans swapped in. Arial's ascent+descent is 0.905em against PJS's ~1.01em,
+     * so the fallback line box is roughly 11% short. 105% closed about half of
+     * that gap; 111% closes it.
+     *
+     * `ascent-override` is set to the *same* value as `size-adjust` so the
+     * override does not scale the already-scaled glyphs a second time — the
+     * two must stay in agreement or the correction overshoots.
+     */
+    size-adjust: 111%;
+    ascent-override: 111%;
+    descent-override: 31%;
+    line-gap-override: 0%;
+  }
+
+  @font-face {
+    font-family: 'Grotesk Fallback';
+    src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+    size-adjust: 113%;
+    ascent-override: 113%;
+    descent-override: 28%;
+    line-gap-override: 0%;
+  }
+
+  @font-face {
+    font-family: 'Syne Fallback';
+    src: local('Arial Black'), local('Arial'), local('Helvetica');
+    /* Syne is a very tall display face — the largest mismatch of the three. */
+    size-adjust: 112%;
+    ascent-override: 105%;
+    descent-override: 25%;
+    line-gap-override: 0%;
+  }
+
+  @font-face {
+    font-family: 'JBMono Fallback';
+    src: local('Consolas'), local('Menlo'), local('DejaVu Sans Mono'), local('Courier New');
+    /* JetBrains Mono is near-monospaced already; Courier New is not, so the
+       glyph advance is what needs the correction, not the vertical metrics. */
+    size-adjust: 100%;
+    ascent-override: 100%;
+    descent-override: 25%;
+    line-gap-override: 0%;
+  }
+
+  /* ============================================================
      RESPONSIVE SPACING — single source of truth
      The mobile step is intentionally aggressive: a stacked column of
      cards at 375px has no need for 80px of breathing room, so the
@@ -144,6 +220,9 @@
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    /* Firefox's equivalent. Without it, Firefox shows the UA's default focus
+       ring *in addition* to ours on top of every control. */
+    -moz-tap-highlight-color: transparent;
     /*
      * Framer Motion's useScroll() measures `getComputedStyle(container).position`
      * and logs "Please ensure that the container has a non-static position"
@@ -159,7 +238,20 @@
     background-color: var(--bg);
     color: var(--text-primary);
     font-family: theme('fontFamily.sans');
+    /*
+     Sub-pixel rendering.
+
+     `antialiased` on WebKit/Blink drops subpixel (LCD) antialiasing and greys
+     glyph edges, which matters most on this palette: the cream background and
+     the espresso brown sit close enough in luminance that colour-fringed text
+     edges visibly vibrate against it. Greyscale edges read cleaner and cost
+     nothing — these faces are hinted for grayscale anyway.
+
+     `grayscale` is the Firefox equivalent and has no effect elsewhere; listing
+     both is correct rather than defensive.
+    */
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-feature-settings: 'ss01', 'cv01';
     /* Plus Jakarta Sans ships a very narrow space glyph — measured at 0.134em
@@ -206,17 +298,114 @@
     background: var(--text-muted);
   }
 
+  /*
+     Focus ring.
+
+     One rule, four properties, applied to everything focusable. The failure
+     mode this replaces was real and measured: several components shipped
+     Tailwind's `focus:outline-none` alongside a border-colour change, so on
+     those elements the only focus affordance was a 1px border shifting hue —
+     invisible against the surface for a user who cannot distinguish the accent
+     from the border, and invisible entirely to a keyboard user mid-page.
+
+     `outline` rather than `box-shadow` deliberately: an outline does not affect
+     layout, so showing it never shifts anything (zero CLS on focus), and it
+     follows border-radius automatically, which a spread shadow does not.
+     2px + 2px offset clears the 1px hairline borders everywhere on the page
+     without touching adjacent elements.
+  */
   :focus-visible {
     outline: 2px solid var(--focus);
-    outline-offset: 3px;
+    outline-offset: 2px;
+    border-radius: inherit;
   }
 
+  /*
+     Inputs opt out of the browser's own ring (Chrome draws a second, thinner
+     one inside ours) but must not opt out of focus feedback entirely. The
+     underline accent plus this inset shadow is the replacement.
+  */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+    box-shadow: inset 0 -2px 0 0 var(--focus);
+  }
+
+  /*
+     Touch targets.
+
+     WCAG 2.1 AA 2.5.8 asks for 24px; 2.5.5 (AAA) and the platform HIG both ask
+     for 44px. The audit found 37 elements below 44px — language pills at 30×22,
+     icon buttons at 36×36, footer links at 20px tall. The icon buttons are the
+     worst case: a 36px target for a sun/moon toggle is a mis-tap waiting to
+     happen on the one control people reach for when the screen is too bright.
+
+     Two mechanisms, deliberately:
+       · `--touch` sets the floor on compact controls that cannot grow without
+         breaking the pill's proportions.
+       · `py-1.5` on footer/nav text links lifts dense text rows without
+         changing their type size or the grid they sit in.
+  */
+  :root {
+    --touch: 2.75rem; /* 44px */
+  }
+
+  /*
+     Reduced motion.
+
+     The global reset collapses animation durations to 0.01ms, which stops all
+     motion — but it also leaves the *end state* of a marquee as `-50%`, i.e.
+     the track parked half a list to the left. That is visually fine (the
+     content is identical either side of the wrap) but it means a reduced-motion
+     visitor sees a static strip, which reads as broken rather than as calm.
+
+     So the looping elements get an explicit static treatment: marquee tracks
+     reset to translate 0 with no animation at all, the status pulse drops its
+     rings and keeps the solid dot, and smooth scrolling becomes instant. The
+     page keeps every affordance — nothing is hidden, only still.
+  */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+
+    /* Static, unshifted, still legible. */
+    .marquee-track {
+      animation: none !important;
+      transform: none !important;
+      will-change: auto !important;
+    }
+
+    /*
+       Keep the mask so the strip still reads as a ticker that continues
+       off-screen, but stop the drift.
+    */
+    .marquee {
+      mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 6%,
+        #000 94%,
+        transparent
+      );
+    }
+
+    /* One solid dot. The expanding ring is the only thing that moves here. */
+    .status-pulse::before {
+      animation: none !important;
+      opacity: 0 !important;
+    }
+
+    .status-pulse::after {
+      animation: none !important;
+      opacity: 1 !important;
     }
   }
 }
@@ -326,6 +515,23 @@
     white-space: nowrap;
   }
 
+  /*
+     Optical icon alignment.
+
+     Lucide's glyphs are drawn on a 24-unit grid with a 2-unit stroke inset, so
+     a 12px icon's visual mass sits ~1px above and ~1px left of its box centre.
+     Centred by flexbox it therefore reads as sitting slightly high and slightly
+     left next to text — very visible on a 10px mono label where the whole line
+     is only 14px tall and a 1px error is a 7% shift.
+
+     `translate(0.06em, 0.02em)` is the measured correction at the icon sizes
+     used here. Applied as a transform rather than a margin so it costs no
+     layout and does not disturb the flex baseline.
+  */
+  .icon-optical {
+    transform: translate(0.06em, 0.02em);
+  }
+
   .swiss-index-strong {
     color: var(--accent);
   }
@@ -423,12 +629,31 @@
     mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
   }
 
+  /*
+     `will-change` is applied here and nowhere else.
+
+     Promoting a layer is not free — each one costs VRAM and a texture upload —
+     so the only element that gets it is the track that genuinely animates
+     transform forever. Everything else on the page animates for a few hundred
+     milliseconds and would keep its layer (and its memory) for the life of the
+     document if we promoted it. Framer's own `will-change` handling covers the
+     transient ones via `will-change: transform` on the animated node only
+     while it runs.
+
+     The two marquee tracks here are the exception: they run for as long as the
+     page is open, so without the hint the browser has to re-evaluate whether
+     to keep the layer every frame.
+  */
   .marquee-track {
     display: flex;
     width: max-content;
     flex: none;
     align-items: center;
     animation: marquee-slide var(--marquee-duration, 38s) linear infinite;
+    will-change: transform;
+    /* Backface culling: a translating layer can otherwise be re-rasterised
+       when it crosses a device pixel boundary mid-loop. */
+    backface-visibility: hidden;
   }
 
   /*

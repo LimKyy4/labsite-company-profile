@@ -461,7 +461,7 @@ export function IconBadge({
     <span
       className={`inline-flex shrink-0 items-center justify-center border border-[var(--border)] bg-[var(--accent-soft)] text-[var(--accent)] transition-colors duration-300 ${box} ${className}`}
     >
-      <Icon className={glyph} strokeWidth={1.6} />
+      <Icon className={`${glyph} icon-optical`} strokeWidth={1.6} />
     </span>
   );
 }

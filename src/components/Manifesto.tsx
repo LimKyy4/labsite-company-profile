@@ -32,10 +32,24 @@ export default function Manifesto() {
           <div className="col-span-12 lg:col-span-7">
             <Reveal delay={0.05}>
               <p className="swiss-index swiss-index-strong flex items-center gap-2">
-                <Quote className="h-3 w-3" strokeWidth={2} />
+                <Quote className="icon-optical h-3 w-3" strokeWidth={2} />
                 {t(ui.manifesto.eyebrow)}
               </p>
-              <h2 className="mt-fluid-sm max-w-[15ch] text-balance font-editorial text-fluid-5xl font-bold leading-[1.02] tracking-tight text-[var(--text-primary)]">
+              {/*
+                `max-w-[20ch]` rather than 15ch.
+
+                At 15ch the English string "Three rules we do not compromise."
+                wrapped to four lines with "compromise." stranded alone on the
+                last one — a 64px line under a 417px first line. `text-wrap:
+                balance` cannot fix that: it only evens out lines already short
+                relative to the measure, and a four-line heading with a two-word
+                tail is below the algorithm's minimum-line threshold, so it
+                leaves the wrap alone. Widening the measure is the actual fix.
+                Syne's cap-height ratio is what made the narrow box so
+                punishing, and a wider box costs nothing here because the
+                heading shares a row with a paragraph that sets its own 46ch.
+              */}
+              <h2 className="mt-fluid-sm max-w-[20ch] text-balance font-editorial text-fluid-5xl font-bold leading-[1.02] tracking-tight text-[var(--text-primary)]">
                 {t(ui.manifesto.title)}
               </h2>
             </Reveal>
@@ -87,7 +101,7 @@ function ManifestoCard({
 
       <div className="relative flex items-center gap-3">
         <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--accent)]/40 bg-[var(--accent-soft)] text-[var(--accent)]">
-          <Icon className="h-5 w-5" strokeWidth={1.6} />
+          <Icon className="icon-optical h-5 w-5" strokeWidth={1.6} />
         </span>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent)]">
           {t(pillar.tagline)}
@@ -104,8 +118,11 @@ function ManifestoCard({
 
       <ul className="relative mt-auto flex flex-wrap gap-2 border-t border-[var(--border)] pt-5">
         {pillar.proof.map((item) => (
-          <li key={item.id} className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">
-            <Check className="h-3 w-3 text-[var(--accent)]" strokeWidth={2.4} />
+          <li
+            key={item.id}
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]"
+          >
+            <Check className="icon-optical h-3 w-3 text-[var(--accent)]" strokeWidth={2.4} />
             {t(item)}
           </li>
         ))}

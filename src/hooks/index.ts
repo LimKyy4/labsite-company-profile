@@ -32,7 +32,15 @@ export function useHeaderScroll(threshold = 24): boolean {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > threshold);
+    const onScroll = () => {
+      // Guard the write: this runs on every scroll frame and the value almost
+      // never changes, so an unconditional setState is ~60 wasted renders per
+      // second of scrolling past the hero.
+      setScrolled((prev) => {
+        const next = window.scrollY > threshold;
+        return prev === next ? prev : next;
+      });
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -50,25 +58,44 @@ export function useScrollSpy(ids: readonly string[], offset = 140): string {
   const [active, setActive] = useState(ids[0] ?? '');
 
   useEffect(() => {
+    let frame = 0;
+
+    /**
+     * Reads every tracked section's rect on each call, so it must not run more
+     * often than once per frame. `getBoundingClientRect` on ten sections is
+     * cheap in isolation but forces layout, and an unthrottled scroll handler
+     * can fire several times per frame during momentum scrolling on trackpads —
+     * which is what produces the "the whole nav jitters while I flick" feel.
+     */
     const handle = () => {
-      let current = '';
-      let best = -Infinity;
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        const top = el.getBoundingClientRect().top - offset;
-        if (top <= 0 && top > best) {
-          best = top;
-          current = id;
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        let current = '';
+        let best = -Infinity;
+        for (const id of ids) {
+          const el = document.getElementById(id);
+          if (!el) continue;
+          const top = el.getBoundingClientRect().top - offset;
+          if (top <= 0 && top > best) {
+            best = top;
+            current = id;
+          }
         }
-      }
-      setActive(current || ids[0] || '');
+        // Only write state on an actual change. Setting the same string still
+        // schedules a React render, and this fires on every scroll frame.
+        setActive((prev) => {
+          const next = current || ids[0] || '';
+          return prev === next ? prev : next;
+        });
+      });
     };
 
     handle();
     window.addEventListener('scroll', handle, { passive: true });
     window.addEventListener('resize', handle);
     return () => {
+      if (frame) cancelAnimationFrame(frame);
       window.removeEventListener('scroll', handle);
       window.removeEventListener('resize', handle);
     };
@@ -80,10 +107,21 @@ export function useScrollSpy(ids: readonly string[], offset = 140): string {
 export function useLockBodyScroll(locked: boolean): void {
   useEffect(() => {
     if (!locked) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    const { body } = document;
+    const previousOverflow = body.style.overflow;
+    const previousPaddingRight = body.style.paddingRight;
+    /*
+     * Hiding body overflow removes the scrollbar, which reflows the whole page
+     * one scrollbar-width to the right — a full-page layout shift the instant a
+     * drawer opens on desktop. Reserving the same width as padding holds the
+     * content box exactly where it was.
+     */
+    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+    body.style.overflow = 'hidden';
+    if (scrollbar > 0) body.style.paddingRight = `${scrollbar}px`;
     return () => {
-      document.body.style.overflow = previous;
+      body.style.overflow = previousOverflow;
+      body.style.paddingRight = previousPaddingRight;
     };
   }, [locked]);
 }
@@ -184,15 +222,41 @@ export function useMagnetic(strength = 0.22): MagneticApi {
   };
 }
 
-/** Counts a numeric metric up when it scrolls into view. Respects reduced motion. */
+/**
+ * Counts a numeric metric up when it scrolls into view. Respects reduced motion.
+ *
+ * Lifecycle notes, since both the observer and the rAF loop are easy to leak:
+ *
+ *  · The `IntersectionObserver` is disconnected the moment it fires, so it never
+ *    outlives the element it watches.
+ *  · `frameRef` is cancelled on re-attach AND on unmount. Without the unmount
+ *    branch a stat that scrolled into view just before navigation keeps its rAF
+ *    loop running against a detached node, calling `setState` on an unmounted
+ *    component for the remaining ~1s of the animation.
+ *  · `document.hidden` suspends the tick and resumes from the original start
+ *    time, so a backgrounded tab does not fast-forward the count on return.
+ */
 export function useCountUp(target: number, durationMs = 1100): { ref: (node: HTMLElement | null) => void; value: number } {
   const reduced = useReducedMotion();
   const [value, setValue] = useState(reduced ? target : 0);
   const frameRef = useRef<number | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const stop = useCallback(() => {
+    if (frameRef.current !== null) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+    observerRef.current?.disconnect();
+    observerRef.current = null;
+  }, []);
+
+  // Unmount safety net. `stop` is stable, so this runs exactly once.
+  useEffect(() => stop, [stop]);
 
   const ref = useCallback(
     (node: HTMLElement | null) => {
-      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      stop();
       if (!node) return;
 
       if (reduced) {
@@ -204,20 +268,34 @@ export function useCountUp(target: number, durationMs = 1100): { ref: (node: HTM
         ([entry]) => {
           if (!entry.isIntersecting) return;
           observer.disconnect();
+          observerRef.current = null;
+
           const start = performance.now();
           const tick = (now: number) => {
+            // A backgrounded tab stops the loop entirely; on return the
+            // elapsed time is measured from the original start, so the count
+            // finishes where it would have rather than jumping.
+            if (document.hidden) {
+              frameRef.current = requestAnimationFrame(tick);
+              return;
+            }
             const progress = Math.min((now - start) / durationMs, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
             setValue(Math.round(target * eased));
-            if (progress < 1) frameRef.current = requestAnimationFrame(tick);
+            if (progress < 1) {
+              frameRef.current = requestAnimationFrame(tick);
+            } else {
+              frameRef.current = null;
+            }
           };
           frameRef.current = requestAnimationFrame(tick);
         },
         { threshold: 0.4 },
       );
       observer.observe(node);
+      observerRef.current = observer;
     },
-    [target, durationMs, reduced],
+    [target, durationMs, reduced, stop],
   );
 
   return { ref, value };
