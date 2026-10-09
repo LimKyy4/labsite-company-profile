@@ -1051,6 +1051,11 @@ export const archFlows: readonly ArchFlow[] = [
 export type ProjectPreview = {
   headline: Localized;
   blocks: readonly { id: string; name: Localized; metric: string }[];
+  /**
+   * Rows for the mini activity table inside the browser mockup. Data lives here
+   * rather than in the component so a case study is a content edit only.
+   */
+  rows: readonly { id: string; label: Localized; value: string; state: 'ok' | 'warn' }[];
 };
 
 export type Project = {
@@ -1090,7 +1095,8 @@ export const projects: readonly Project[] = [
       tr('Sistem Filter Kendaraan', 'Vehicle Filtering System'),
       tr('UI/UX Profesional', 'Professional UI/UX'),
     ],
-    liveUrl: 'https://memotive.infinityfreeapp.com/?i=1',
+    liveUrl: 'https://app.memotive.id/',
+
     stack: [
       tr('Website', 'Website'),
       tr('Inventori', 'Inventory'),
@@ -1101,9 +1107,14 @@ export const projects: readonly Project[] = [
       headline: tr('Katalog unit dengan filter dan stok real-time', 'Unit catalogue with filters and real-time stock'),
       blocks: [
         { id: 'body', name: tr('Unit Tersedia', 'Units Available'), metric: '48' },
-        { id: 'transmission', name: tr('Transmisi', 'Transmission'), metric: 'Automatic' },
+        { id: 'trans', name: tr('Transaksi', 'Transactions'), metric: '124' },
         { id: 'year', name: tr('Tahun Produksi', 'Year Built'), metric: '2020-2024' },
         { id: 'price', name: tr('Rentang Harga', 'Price Range'), metric: 'Rp 80-350jt' },
+      ],
+      rows: [
+        { id: 'inv-01', label: tr('BPK 3091 KK · Diperbarui', 'BPK 3091 KK · Updated'), value: '2 mnt', state: 'ok' },
+        { id: 'inv-02', label: tr('DP 2020 · Terjual', 'DP 2020 · Sold'), value: '11 mnt', state: 'ok' },
+        { id: 'inv-03', label: tr('Stok masuk · dijadwalkan', 'Incoming stock · scheduled'), value: '3 hari', state: 'warn' },
       ],
     },
   },
@@ -1129,15 +1140,19 @@ export const projects: readonly Project[] = [
       tr('Verifikasi Pembayaran QRIS', 'QRIS Payment Verification'),
       tr('Pembaruan Penjualan & Stok Otomatis', 'Automated Sales & Stock Update'),
     ],
-    liveUrl: 'https://seblak-kuy.infinityfreeapp.com/?i=1',
+    liveUrl: 'https://app.seblakkuy.id/',
     stack: [tr('Pemesanan Online', 'Online Ordering'), tr('POS', 'POS'), tr('QRIS', 'QRIS'), tr('Pelaporan', 'Reporting')],
     preview: {
       headline: tr('Pemesanan online dengan verifikasi pembayaran QRIS', 'Online ordering with QRIS payment verification'),
       blocks: [
-        { id: 'orders', name: tr('Pesanan Hari Ini', 'Orders Today'), metric: '32' },
-        { id: 'revenue', name: tr('Omzet Terkonfirmasi', 'Confirmed Revenue'), metric: 'Rp 1,4jt' },
-        { id: 'stock', name: tr('Stok Keluar', 'Stock Out'), metric: '18' },
-        { id: 'qris', name: tr('QRIS Terverifikasi', 'QRIS Verified'), metric: '29' },
+      { id: 'revenue', name: tr('Omzet Terkonfirmasi', 'Confirmed Revenue'), metric: 'Rp 1,4jt' },
+      { id: 'stock', name: tr('Stok Keluar', 'Stock Out'), metric: '18' },
+      { id: 'qris', name: tr('QRIS Terverifikasi', 'QRIS Verified'), metric: '29' },
+      ],
+      rows: [
+        { id: 'ord-01', label: tr('#A-0148 · QRIS', '#A-0148 · QRIS'), value: 'Lunas', state: 'ok' },
+        { id: 'ord-02', label: tr('#A-0149 · QRIS', '#A-0149 · QRIS'), value: 'Lunas', state: 'ok' },
+        { id: 'ord-03', label: tr('#A-0150 · Tunai', '#A-0150 · Cash'), value: 'Tertunda', state: 'warn' },
       ],
     },
   },
@@ -1165,7 +1180,7 @@ export const heroStats: readonly HeroStat[] = [
   {
     id: 'stages',
     count: 6,
-    suffix: '-STAGE',
+    suffix: '-TAHAP',
     label: tr('Delivery Protocol', 'Delivery Protocol'),
     detail: tr(
       'Diagnose sampai optimize, dengan deliverable tiap tahap',

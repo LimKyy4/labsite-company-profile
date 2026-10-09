@@ -97,7 +97,14 @@ export default function Navbar() {
           href="#top"
           className="group -my-1.5 flex min-h-[var(--touch)] shrink-0 items-center gap-2 px-1 py-1.5 sm:gap-2.5 sm:pr-2"
         >
-          <CircuitLogo />
+          <img
+            src="/logo.png"
+            alt=""
+            aria-hidden
+            width={36}
+            height={28}
+            className="h-7 w-auto shrink-0 object-contain transition-transform duration-500 ease-editorial group-hover:-rotate-6 md:h-8"
+          />
           <span className="hidden flex-col leading-none min-[360px]:flex">
             <span className="font-display text-sm font-semibold tracking-tight sm:text-base">
               {brand.name}
@@ -378,27 +385,5 @@ function ThemeToggle({ theme, onToggle }: { theme: 'light' | 'dark'; onToggle: (
         </motion.span>
       </AnimatePresence>
     </button>
-  );
-}
-
-/** LABSITE.ID circuit mark: two rounded nodes joined by an orthogonal trace. */
-export function CircuitLogo({ className = '' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 32 32"
-      fill="none"
-      aria-hidden
-      className={`h-7 w-7 shrink-0 text-[var(--accent)] transition-transform duration-500 ease-editorial group-hover:-rotate-12 ${className}`}
-    >
-      <path
-        d="M13 19v-4a2 2 0 0 1 2-2h4"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <circle cx="10.5" cy="21.5" r="3.25" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="21.5" cy="10.5" r="3.25" fill="currentColor" />
-      <circle cx="21.5" cy="10.5" r="6" stroke="currentColor" strokeWidth="0.9" opacity="0.3" />
-    </svg>
   );
 }

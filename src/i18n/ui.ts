@@ -46,6 +46,10 @@ export const ui = {
       'yang otomatis, andal, dan terukur.',
       'that run automatically, reliably, and measurably.',
     ),
+    description: tr(
+      'Setiap arsitektur direkayasa dari nol untuk menjamin kecepatan tinggi, keamanan kelas enterprise, dan kemudahan pengembangan tanpa beban template instan.',
+      'Every architecture is engineered from the ground up to deliver high speed, enterprise-grade security, and maintainable extensibility without the bloat of off-the-shelf templates.',
+    ),
     ctaPrimary: tr('Konsultasi Masalah Anda', 'Consult About Your Problem'),
     ctaSecondary: tr('Baca Code Manifesto', 'Read the Code Manifesto'),
     audienceLocal: tr('UMKM & bisnis lokal', 'SME & local business'),
@@ -219,6 +223,9 @@ export const ui = {
     solutionsHeading: tr('Yang kami bangun', 'What we built'),
     openTab: tr('Buka di tab baru', 'Open in a new tab'),
     visitSite: tr('Kunjungi Website Live', 'Visit the Live Website'),
+    mockLive: tr('Stok Langsung', 'Live Stock'),
+    mockSync: tr('Sinkron 0ms', 'Synced 0ms'),
+    mockActivity: tr('Aktivitas terbaru', 'Latest activity'),
   },
 
   /* ── FAQ ──────────────────────────────────────────────────────────── */

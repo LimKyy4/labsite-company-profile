@@ -83,7 +83,9 @@ export default function Projects() {
 
 function ProjectShowcase({ project, view }: { project: Project; view: View }) {
   const { t, lang } = useLanguage();
-  const host = project.liveUrl.replace(/^https?:\/\//, '').replace(/\?.*$/, '');
+  const host = project.liveUrl
+    .replace(/^https?:\/\//, '')
+    .replace(/[/?#].*$/, '');
   const items = view === 'challenges' ? project.challenges : project.solutions;
 
   return (
@@ -116,9 +118,15 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
         <p className="swiss-index">{t(project.preview.headline)}</p>
         <div className="mt-4 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]">
           <div className="flex items-center gap-2 border-b border-[var(--border)] px-3 py-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
-            <span className="font-mono text-[10px] tracking-[0.16em] text-[var(--text-muted)]">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" aria-hidden />
+            <span className="min-w-0 truncate font-mono text-[10px] tracking-[0.16em] text-[var(--text-muted)]">
               {project.name}
+            </span>
+            <span className="ml-auto flex shrink-0 items-center gap-1.5">
+              <span className="status-pulse" aria-hidden />
+              <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-[var(--accent)]">
+                {t(ui.projects.mockLive)}
+              </span>
             </span>
           </div>
           <div className="grid grid-cols-2 gap-px bg-[var(--border)] sm:grid-cols-4">
@@ -133,14 +141,50 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
               </div>
             ))}
           </div>
-          <div className="space-y-2 p-3" aria-hidden>
-            <div className="h-2 w-3/4 rounded-full bg-[var(--border)]" />
-            <div className="h-2 w-1/2 rounded-full bg-[var(--border)]" />
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              <div className="h-10 rounded-md border border-[var(--border)]" />
-              <div className="h-10 rounded-md border border-[var(--border)]" />
-              <div className="h-10 rounded-md border border-[var(--accent)]/40 bg-[var(--accent-soft)]" />
+
+          {/*
+            Mini activity table.
+
+            This used to be three empty grey skeleton boxes plus two grey bars,
+            which read as a screenshot of a page that had not finished loading —
+            the mockup was selling a broken state instead of a product. It now
+            carries real rows from the data layer, a live-status badge, and the
+            sync latency, so the panel reads as a running system.
+          */}
+          <div className="border-t border-[var(--border)]">
+            <div className="flex items-center justify-between gap-3 px-3 py-2">
+              <p className="swiss-index">{t(ui.projects.mockActivity)}</p>
+              <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                {t(ui.projects.mockSync)}
+              </p>
             </div>
+            <ul className="border-t border-[var(--border)]">
+              {project.preview.rows.map((row) => (
+                <li
+                  key={row.id}
+                  className="flex items-center justify-between gap-3 border-b border-[var(--border)] px-3 py-2 last:border-b-0"
+                >
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span
+                      aria-hidden
+                      className={`h-1.5 w-1.5 shrink-0 rotate-45 ${
+                        row.state === 'ok' ? 'bg-[var(--status-ok)]' : 'bg-[var(--text-muted)]'
+                      }`}
+                    />
+                    <span className="min-w-0 truncate font-mono text-[10px] tracking-[0.06em] text-[var(--text-secondary)]">
+                      {t(row.label)}
+                    </span>
+                  </span>
+                  <span
+                    className={`shrink-0 font-mono text-[10px] uppercase tracking-[0.1em] ${
+                      row.state === 'ok' ? 'text-[var(--status-ok)]' : 'text-[var(--text-muted)]'
+                    }`}
+                  >
+                    {row.value}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

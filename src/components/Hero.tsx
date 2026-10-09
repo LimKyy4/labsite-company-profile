@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Boxes, Cpu, ShieldCheck, Sparkles, Zap } from 'lucide-react';
-import { brand, engineeringMarks, heroStats, sectionIndex, systemStatus, type HeroStat } from '../data/companyData';
+import { engineeringMarks, heroStats, sectionIndex, systemStatus, type HeroStat } from '../data/companyData';
 import { ui } from '../i18n/ui';
 import { useLanguage } from '../context/LanguageContext';
 import { useCountUp, useMagnetic, useMediaQuery } from '../hooks';
@@ -25,7 +25,6 @@ export default function Hero() {
     t(ui.hero.audienceDiagnose),
     t(ui.hero.audiencePartner),
   ];
-
   return (
     <section id="hero" className="surface relative overflow-hidden pb-section pt-24 sm:pt-28 lg:pt-36">
       <div className="shell">
@@ -49,7 +48,7 @@ export default function Hero() {
               wrong clause or dropping the emphasis. */}
           <motion.h1
             variants={welcomeItem}
-            className="mt-5 max-w-[24ch] text-balance text-[1.8rem] font-semibold leading-[1.05] tracking-[-0.03em] text-[var(--text-primary)] sm:mt-6 sm:text-fluid-4xl lg:max-w-[20ch] lg:text-fluid-5xl lg:leading-[0.98]"
+            className="mt-5 max-w-[23ch] text-balance text-[1.8rem] font-semibold leading-[1.08] tracking-[-0.03em] text-[var(--text-primary)] sm:mt-6 sm:text-fluid-4xl lg:max-w-[19ch] lg:text-fluid-5xl lg:leading-[1.01]"
           >
             {t(ui.hero.headlineLead)}{' '}
             <span className="text-[var(--accent)]">{t(ui.hero.headlineAccent)}</span>{' '}
@@ -70,7 +69,7 @@ export default function Hero() {
               variants={welcomeItem}
               className="max-w-[58ch] text-pretty text-fluid-base leading-relaxed text-[var(--text-secondary)]"
             >
-              {t(brand.subtitle)}
+              {t(ui.hero.description)}
             </motion.p>
 
             <motion.div variants={welcomeItem} className="mt-5 flex flex-wrap items-center gap-2.5">
@@ -138,10 +137,10 @@ export default function Hero() {
           {wide ? (
             <div className="mt-3 grid gap-px overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--border)] sm:grid-cols-3">
               {heroStats.map((stat) => (
-                <motion.div
+<motion.div
                   key={stat.id}
                   variants={welcomeItem}
-                  className="bg-[var(--bg)] p-5 transition-colors duration-500 hover:bg-[var(--accent-soft)] lg:p-7"
+                  className="min-w-0 bg-[var(--bg)] p-5 transition-colors duration-500 hover:bg-[var(--accent-soft)] lg:p-7"
                 >
                   <StatBlock stat={stat} />
                 </motion.div>
@@ -172,12 +171,12 @@ export default function Hero() {
 function StatBlock({ stat }: { stat: HeroStat }) {
   const { t } = useLanguage();
 
-  return (
-    <>
+return (
+    <div className="flex h-full flex-col pb-1">
       <p className="swiss-index">{t(stat.label)}</p>
       <StatValue stat={stat} />
       <p className="mt-2 text-xs leading-relaxed text-[var(--text-secondary)]">{t(stat.detail)}</p>
-    </>
+    </div>
   );
 }
 
@@ -186,8 +185,8 @@ type CountedStat = Extract<HeroStat, { count: number }>;
 function StatValue({ stat }: { stat: HeroStat }) {
   if ('count' in stat) return <CountedStatValue stat={stat} />;
 
-  return (
-    <p className="mt-2 font-display text-fluid-2xl font-semibold tracking-tight tabular text-[var(--text-primary)]">
+return (
+    <p className="mt-2 break-words font-display text-fluid-2xl font-semibold tracking-tight tabular text-[var(--text-primary)]">
       {stat.value}
     </p>
   );
@@ -201,15 +200,16 @@ function CountedStatValue({ stat }: { stat: CountedStat }) {
   // The `-STAGE` suffix is a word, and in Indonesian the correct suffix is
   // `-TAHAP`. Both are nouns, so they follow the active language rather than
   // being hardcoded into the data as an invariant string.
-  const suffix = stat.suffix === '-STAGE' ? t(ui.hero.statSuffixStages) : stat.suffix;
+  const suffix = stat.suffix === '-TAHAP' ? t(ui.hero.statSuffixStages) : stat.suffix;
 
   return (
-    <p
-      className="mt-2 font-display text-fluid-2xl font-semibold tracking-tight tabular text-[var(--text-primary)]"
-      lang={lang}
-    >
-      <span ref={animated.ref}>{animated.value}</span>
-      <span className="text-[var(--accent)]">{suffix}</span>
-    </p>
+<p
+        ref={animated.ref}
+        className="mt-2 break-words font-display text-fluid-2xl font-semibold tracking-tight tabular text-[var(--text-primary)]"
+        lang={lang}
+      >
+        {animated.value}
+        <span className="text-[var(--accent)]">{suffix}</span>
+      </p>
   );
 }

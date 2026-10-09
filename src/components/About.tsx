@@ -65,9 +65,21 @@ function PositionCard() {
   const { t } = useLanguage();
 
   const facts = [
-    { term: t(ui.about.positionFocus), detail: t(ui.about.positionFocusValue) },
-    { term: t(ui.about.positionApproach), detail: t(ui.about.positionApproachValue) },
-    { term: t(ui.about.positionRelation), detail: t(ui.about.positionRelationValue) },
+    { id: 'focus', term: t(ui.about.positionFocus), detail: t(ui.about.positionFocusValue) },
+    {
+      id: 'relation',
+      // Rendered with an explicit hairline rule between the two terms. In a
+      // three-column grid at 375px the two labels had no gap between them and
+      // read as one run-on word.
+      term: (
+        <span className="flex items-center gap-2">
+          <span>{t(ui.about.positionApproach)}</span>
+          <span className="h-px w-4 shrink-0 bg-[var(--border-strong)]" aria-hidden />
+          <span>{t(ui.about.positionRelation)}</span>
+        </span>
+      ),
+      detail: t(ui.about.positionRelationValue),
+    },
   ];
 
   return (
@@ -83,9 +95,9 @@ function PositionCard() {
         </div>
       </div>
 
-      <dl className="mt-6 grid grid-cols-3 gap-3 border-t border-[var(--border)] pt-5">
+      <dl className="mt-6 grid grid-cols-1 gap-x-6 gap-y-4 border-t border-[var(--border)] pt-5 sm:grid-cols-3">
         {facts.map((item) => (
-          <div key={item.term}>
+          <div key={item.id}>
             <dt className="swiss-index">{item.term}</dt>
             <dd className="mt-1.5 text-xs font-medium leading-snug text-[var(--text-primary)]">
               {item.detail}

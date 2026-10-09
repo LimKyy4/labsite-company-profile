@@ -63,9 +63,8 @@ export default function FocusBelief() {
                 transition={{ duration: 0.3, ease: EDITORIAL }}
                 className="rounded-2xl border border-[var(--accent)] bg-[var(--accent-soft)] p-6 sm:p-8"
               >
-                <p className="swiss-index swiss-index-strong">
-                  {t(ui.focus.stagePrefix)}
-                  {current.step}
+                <p className="swiss-index swiss-index-strong flex items-center gap-3">
+                  {t(ui.focus.stagePrefix)}{current.step}
                 </p>
                 <h3 className="mt-3 font-display text-fluid-2xl font-semibold tracking-tight text-[var(--text-primary)]">
                   {t(current.name)}

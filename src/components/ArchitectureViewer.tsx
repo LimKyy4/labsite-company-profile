@@ -174,7 +174,7 @@ function ArchNodeCard({
         <span className="flex items-center gap-1.5">
           <span className="status-pulse" aria-hidden />
           <span className="font-mono text-[9px] uppercase leading-none tracking-[0.16em] text-[var(--accent)]">
-            hop {String(order + 1).padStart(2, '0')}
+            NODE {String(order + 1).padStart(2, '0')}
           </span>
         </span>
         <span className="mt-1.5 block truncate font-mono text-[12px] font-medium leading-tight text-[var(--text-primary)]">
