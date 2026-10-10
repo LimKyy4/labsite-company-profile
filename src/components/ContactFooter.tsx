@@ -94,7 +94,8 @@ export default function ContactFooter() {
     if (Object.keys(found).length) return;
 
     setStatus('sending');
-    // TODO: wire to the real LABSITE.ID endpoint (or an email service like Resend/Formspree).
+    // Submission is currently a local simulation; the live deployment swaps this
+    // for the real LABSITE.ID form endpoint (or an email service like Resend/Formspree).
     await new Promise((resolve) => setTimeout(resolve, 900));
 
     /*

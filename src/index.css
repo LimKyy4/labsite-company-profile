@@ -759,14 +759,6 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .hairline-t {
-    border-top: 1px solid var(--border);
-  }
-
-  .gpu {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-  }
 }
 
 @layer utilities {

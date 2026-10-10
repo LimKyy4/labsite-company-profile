@@ -1,0 +1,8 @@
+# LABSITE.ID
+# Allow all major crawlers full access; nothing on the static site is private.
+
+User-agent: *
+Allow: /
+
+# Canonical crawl source of truth.
+Sitemap: https://labsite.id/sitemap.xml

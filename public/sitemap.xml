@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  LABSITE.ID sitemap.
+
+  The site is a single-page app whose language is a runtime attribute, not a
+  separate path, so every `hreflang` alternative resolves to the same URL.
+  `x-default` is declared per Google's guidance for such dynamic pages.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://labsite.id/</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/" />
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- The eight primary section anchors, in canonical 01–08 order. -->
+  <url>
+    <loc>https://labsite.id/#overview</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/#overview" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/#overview" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/#overview" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://labsite.id/#diagnostics</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/#diagnostics" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/#diagnostics" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/#diagnostics" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://labsite.id/#manifesto</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/#manifesto" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/#manifesto" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/#manifesto" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://labsite.id/#architecture</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/#architecture" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/#architecture" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/#architecture" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://labsite.id/#projects</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/#projects" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/#projects" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/#projects" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://labsite.id/#approach</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/#approach" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/#approach" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/#approach" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://labsite.id/#faq</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/#faq" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/#faq" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/#faq" />
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://labsite.id/#contact</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://labsite.id/#contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://labsite.id/#contact" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://labsite.id/#contact" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>

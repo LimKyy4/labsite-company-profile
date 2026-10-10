@@ -9,6 +9,33 @@
       name="description"
       content="LABSITE.ID adalah mitra rekayasa sistem untuk UMKM dan bisnis lokal. Kami mentransformasi operasional yang berantakan menjadi sistem digital yang otomatis, andal, dan terukur — custom-built, zero bloat, type-safe."
     />
+    <link rel="canonical" href="https://labsite.id/" />
+
+    <!-- OpenGraph. Values are the Indonesian defaults; LanguageProvider rewrites
+        og:title / og:description / og:locale on every language switch so crawlers
+        and social scrapers always see the locale actually being served. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LABSITE.ID" />
+    <meta property="og:title" content="LABSITE.ID — Mitra Rekayasa TI Profesional" />
+    <meta
+      property="og:description"
+      content="LABSITE.ID adalah mitra rekayasa sistem untuk UMKM dan bisnis lokal: diagnosis dulu, lalu arsitektur, lalu kode — custom-built, zero bloat, terukur."
+    />
+    <meta property="og:url" content="https://labsite.id/" />
+    <meta property="og:image" content="https://labsite.id/logo.png" />
+    <meta property="og:image:alt" content="Logo LABSITE.ID" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- https://ogp.me/#twitter-card summary, so shared links render a card on X. -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="LABSITE.ID — Mitra Rekayasa TI Profesional" />
+    <meta
+      name="twitter:description"
+      content="LABSITE.ID adalah mitra rekayasa sistem untuk UMKM dan bisnis lokal — custom-built, zero bloat, terukur."
+    />
+    <meta name="twitter:image" content="https://labsite.id/logo.png" />
+
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF8F5" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#120E0C" />
 
@@ -78,6 +105,84 @@
         rel="stylesheet"
       />
     </noscript>
+
+    <!-- Structured data. `@graph` keeps the ProfessionalService and its owning
+        Organization in one response; the service catalogue mirrors the four
+        engineering pillars shown on the page so the schema and the UI never
+        describe different offerings. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://labsite.id/#service",
+            "name": "LABSITE.ID",
+            "url": "https://labsite.id/",
+            "logo": "https://labsite.id/logo.png",
+            "parentOrganization": { "@id": "https://labsite.id/#organization" },
+            "description": "Mitra rekayasa sistem untuk UMKM dan bisnis lokal di Indonesia: diagnosis dulu, lalu arsitektur, lalu kode — custom-built, zero bloat, dan terukur.",
+            "priceRange": "$$",
+            "areaServed": { "@type": "Country", "name": "Indonesia" },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Layanan Rekayasa Digital",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Kehadiran Digital",
+                    "description": "Company website, landing page, katalog produk, dan profil bisnis yang ditemukan mesin pencari."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Digitalisasi Proses",
+                    "description": "Menghilangkan kerja manual lewat alur kerja digital, form online, dan pengelolaan data terpusat."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Sistem Bisnis",
+                    "description": "Sistem manajemen, dashboard, database, dan inventori yang memberi satu sumber kebenaran."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Otomasi & Integrasi",
+                    "description": "Otomasi alur kerja, integrasi API dan WhatsApp, serta pelaporan otomatis."
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://labsite.id/#organization",
+            "name": "LABSITE.ID",
+            "url": "https://labsite.id/",
+            "logo": "https://labsite.id/logo.png",
+            "email": "hello@labsite.id",
+            "areaServed": { "@type": "Country", "name": "Indonesia" },
+            "knowsAbout": [
+              "Software Engineering",
+              "Web Development",
+              "Database Systems",
+              "Business Process Automation",
+              "Digital Presence"
+            ],
+            "sameAs": []
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

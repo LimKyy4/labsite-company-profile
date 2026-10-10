@@ -112,8 +112,8 @@ function ProjectShowcase({ project, view }: { project: Project; view: View }) {
         </a>
       </div>
 
-      {/* Schematic preview of the delivered interface.
-          TODO: replace with real product screenshots once available. */}
+      {/* Schematic preview of the delivered interface, built from the data
+          layer so a case study stays a content edit. */}
       <div className="border-b border-[var(--border)] bg-[var(--bg)] p-5">
         <p className="swiss-index">{t(project.preview.headline)}</p>
         <div className="mt-4 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]">

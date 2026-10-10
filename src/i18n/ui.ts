@@ -303,6 +303,22 @@ export const ui = {
   systemLog: {
     dismiss: tr('Tutup log', 'Dismiss log'),
   },
+
+  /* ── Head metadata (title/description/OpenGraph) ───────────────────── */
+  /* Written to the document head by LanguageProvider on every language
+     switch, so crawlers and social scrapers always see the locale actually
+     being served. Static Indonesian defaults live in index.html for the
+     no-JS case. */
+  seo: {
+    title: tr(
+      'LABSITE.ID — Mitra Rekayasa TI Profesional',
+      'LABSITE.ID — Professional IT Engineering Partner',
+    ),
+    description: tr(
+      'LABSITE.ID adalah mitra rekayasa sistem untuk UMKM dan bisnis lokal: diagnosis dulu, lalu arsitektur, lalu kode — custom-built, zero bloat, dan terukur.',
+      'LABSITE.ID is a systems-engineering partner for SMEs and local businesses: diagnosis first, then architecture, then code — custom-built, zero bloat, and measurable.',
+    ),
+  },
 } as const satisfies Record<string, unknown>;
 
 export type UiDictionary = typeof ui;

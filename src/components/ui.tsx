@@ -4,7 +4,6 @@ import { Children, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useMagnetic } from '../hooks';
 
 export const EDITORIAL = [0.16, 1, 0.3, 1] as const;
-export const SWIFT = [0.32, 0.72, 0, 1] as const;
 
 /**
  * Animation budget.
@@ -23,9 +22,6 @@ export const SWIFT = [0.32, 0.72, 0, 1] as const;
  *    under-damped and produced a visible bounce on touch-down.
  */
 export const SPRING = { type: 'spring', stiffness: 220, damping: 24, mass: 0.85 } as const;
-
-/** Layout-indicator spring: same settle, slightly quicker to hand off focus. */
-export const SPRING_SNAPPY = { type: 'spring', stiffness: 260, damping: 26, mass: 0.8 } as const;
 
 /** Scroll-in reveal. Matches SPRING so a card never lands differently than its frame. */
 export const SPRING_REVEAL = { type: 'spring', stiffness: 220, damping: 24, mass: 0.85 } as const;
@@ -47,16 +43,6 @@ export const REVEAL_Y = 18;
 export const fadeUp: Variants = {
   hidden: { opacity: 0, y: REVEAL_Y },
   show: { opacity: 1, y: 0, transition: SPRING_REVEAL },
-};
-
-export const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: SPRING_REVEAL },
-};
-
-export const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.985 },
-  show: { opacity: 1, scale: 1, transition: SPRING_REVEAL },
 };
 
 /** Page-load sequence for the hero column. */

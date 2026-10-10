@@ -1266,7 +1266,9 @@ export const contactInfo = {
   email: 'hello@labsite.id',
   address: tr('Indonesia', 'Indonesia'),
   website: 'https://labsite.id',
-  // TODO: isi dengan tautan resmi LABSITE.ID (Instagram, LinkedIn, WhatsApp)
+  // Official social profiles (Instagram, LinkedIn, WhatsApp) live here once
+  // they are published; an empty list renders the "coming soon" line in the
+  // footer instead of a dead link.
   socials: [] as readonly { label: string; url: string; icon: LucideIcon }[],
 } as const;
 

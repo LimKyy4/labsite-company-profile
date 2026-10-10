@@ -168,15 +168,6 @@ export function useElementWidth<T extends HTMLElement>(): [
   return [ref, width];
 }
 
-/** Same as useElementWidth but also exposes the raw node for scroll targets. */
-export function useMeasuredTrack<T extends HTMLElement>(): {
-  ref: (node: T | null) => void;
-  width: number;
-} {
-  const [ref, width] = useElementWidth<T>();
-  return { ref, width };
-}
-
 type MagneticApi = {
   x: MotionValue<number>;
   y: MotionValue<number>;
