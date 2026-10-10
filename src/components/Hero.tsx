@@ -26,7 +26,7 @@ export default function Hero() {
     t(ui.hero.audiencePartner),
   ];
   return (
-    <section id="hero" className="surface relative overflow-hidden pb-section pt-24 sm:pt-28 lg:pt-36">
+    <section id="overview" className="surface relative overflow-hidden pb-section pt-24 sm:pt-28 lg:pt-36">
       <div className="shell">
         {/* ── Masthead ──────────────────────────────────────────────── */}
         <motion.div variants={welcomeSequence} initial="hidden" animate="show">
@@ -147,7 +147,7 @@ export default function Hero() {
               ))}
             </div>
           ) : (
-            <SnapRail label={t(ui.hero.proofRailLabel)} className="mt-3">
+            <SnapRail label={t(ui.hero.proofRailLabel)} counterPrefix="PROOF" className="mt-3">
               {heroStats.map((stat) => (
                 <motion.div
                   key={stat.id}

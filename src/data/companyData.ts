@@ -268,16 +268,20 @@ export const belief = {
    ========================================================================== */
 
 export const sectionIndex = {
+  /* The eight primary sections share one 01–08 sequence across the page,
+     the desktop nav and the mobile drawer, so a numeral always means the
+     same thing wherever it appears. The two auxiliary profile sections keep
+     an `A`-prefixed index to stay out of that run. */
   hero: { index: '01', label: 'SYSTEM_INIT' },
   about: { index: 'A1', label: 'PARTNER_PROFILE' },
   focus: { index: 'A2', label: 'OPERATING_BELIEF' },
   problems: { index: '02', label: 'COMMON_DIAGNOSTICS' },
-  approach: { index: 'A3', label: 'DELIVERY_PROTOCOL' },
+  approach: { index: '06', label: 'DELIVERY_PROTOCOL' },
   manifesto: { index: '03', label: 'CODE_MANIFESTO' },
   solutions: { index: '04', label: 'ARCHITECTURE_SOLUTIONS' },
   work: { index: '05', label: 'FEATURED_PROJECTS' },
-  faq: { index: 'A4', label: 'ENGAGEMENT_FAQ' },
-  contact: { index: '06', label: 'CONTACT_GATEWAY' },
+  faq: { index: '07', label: 'ENGAGEMENT_FAQ' },
+  contact: { index: '08', label: 'CONTACT_GATEWAY' },
 } as const;
 
 /* ============================================================================
@@ -1267,12 +1271,13 @@ export const contactInfo = {
 } as const;
 
 /**
- * Five grouped navigation categories.
+ * Five grouped navigation categories shown in the desktop capsule.
  *
- * The previous eight-item menu overflowed the pill at `lg` and forced
- * 10px mono labels to butt against each other. Each entry now points at a
- * *group* of sections rather than one anchor, so the pill stays calm while the
- * scroll spy still tracks the sections underneath.
+ * Each entry carries one primary anchor (the section it is named after) and
+ * a `targets` list used only for scroll-spy highlighting, so every section on
+ * the page still lights up a pill. The primary anchors are the canonical
+ * section ids: `#overview`, `#diagnostics`, `#architecture`, `#projects`,
+ * `#contact`.
  */
 export type NavLink = {
   id: string;
@@ -1289,29 +1294,29 @@ export const navLinks: readonly NavLink[] = [
     id: 'overview',
     index: '01',
     label: tr('Ikhtisar', 'Overview'),
-    href: '#about',
-    targets: ['about', 'focus', 'problems'],
+    href: '#overview',
+    targets: ['overview', 'about', 'focus'],
   },
   {
-    id: 'method',
+    id: 'diagnostics',
     index: '02',
-    label: tr('Metode', 'Method'),
-    href: '#approach',
-    targets: ['approach', 'manifesto'],
+    label: tr('Diagnosis', 'Diagnosis'),
+    href: '#diagnostics',
+    targets: ['diagnostics', 'approach'],
   },
   {
     id: 'architecture',
     index: '03',
     label: tr('Arsitektur', 'Architecture'),
-    href: '#solutions',
-    targets: ['solutions'],
+    href: '#architecture',
+    targets: ['manifesto', 'architecture'],
   },
   {
-    id: 'work',
+    id: 'projects',
     index: '04',
     label: tr('Kasus', 'Projects'),
-    href: '#work',
-    targets: ['work', 'faq'],
+    href: '#projects',
+    targets: ['projects', 'faq'],
   },
   {
     id: 'contact',
@@ -1327,14 +1332,14 @@ export const navLinks: readonly NavLink[] = [
  * list; each nav entry then claims active state if any of its targets matches.
  */
 export const sectionIds: readonly string[] = [
-  'hero',
+  'overview',
   'about',
   'focus',
-  'problems',
+  'diagnostics',
   'approach',
   'manifesto',
-  'solutions',
-  'work',
+  'architecture',
+  'projects',
   'faq',
   'contact',
 ] as const;

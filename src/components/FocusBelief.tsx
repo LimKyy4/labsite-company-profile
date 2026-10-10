@@ -42,7 +42,7 @@ export default function FocusBelief() {
           </RevealGroup>
         ) : (
           <div className="col-span-12">
-            <SnapRail label={t(ui.focus.railLabel)} onActiveChange={setActive}>
+            <SnapRail label={t(ui.focus.railLabel)} counterPrefix="STAGE" onActiveChange={setActive}>
               {focus.stages.map((stage, index) => (
                 <div key={stage.id} className="rail-slide">
                   <FocusCard stage={stage} active={index === active} onSelect={() => setActive(index)} />

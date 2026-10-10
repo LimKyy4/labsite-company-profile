@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Menu, Moon, Sun, X } from 'lucide-react';
 import { brand, navLinks, sectionIds, systemStatus } from '../data/companyData';
@@ -22,7 +22,7 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: EDITORIAL }}
-      className="pointer-events-none fixed inset-x-0 top-0 z-50 flex flex-col items-center px-3 pt-3 sm:px-4 sm:pt-4"
+      className="pointer-events-none fixed inset-x-0 top-4 z-50 flex flex-col items-center justify-center px-4"
     >
       {/*
         Backdrop.
@@ -81,7 +81,7 @@ export default function Navbar() {
            already exceed the 320 - 16px of available pill width, so the wordmark
            is dropped rather than letting the capsule overflow. The brand is
            still in the footer, and `#top` is reachable from the drawer. */
-        className={`pointer-events-auto flex w-full max-w-5xl items-center gap-1.5 rounded-full border px-2 py-1 transition-all duration-500 ease-editorial sm:gap-2 sm:px-3 xl:max-w-[84rem] ${
+        className={`pointer-events-auto flex w-full max-w-7xl items-center justify-between gap-1.5 rounded-full border px-3 py-1.5 transition-all duration-500 ease-editorial sm:gap-4 sm:px-5 sm:py-2.5 ${
           scrolled || open
             ? 'border-[var(--border)] bg-[var(--bg)]/92 shadow-pill backdrop-blur-xl'
             : 'border-transparent bg-transparent'
@@ -227,43 +227,51 @@ export default function Navbar() {
   );
 }
 
-/** Flat list of every section, ordered, for the mobile drawer. */
-const DRAWER_LINKS = [
-  { id: 'about', label: 'Partner' },
-  { id: 'focus', label: 'Prinsip' },
-  { id: 'problems', label: 'Diagnosis' },
-  { id: 'approach', label: 'Metode' },
-  { id: 'manifesto', label: 'Manifesto' },
-  { id: 'solutions', label: 'Arsitektur' },
-  { id: 'work', label: 'Kasus' },
-  { id: 'faq', label: 'FAQ' },
-  { id: 'contact', label: 'Kontak' },
-] as const;
-
 /**
- * Bilingual drawer labels. Kept local rather than in the data layer because
- * these are navigation chrome that must not drift when content is reordered.
+ * The eight primary sections, in their canonical 01–08 order, for the mobile
+ * drawer. This is the full map — the desktop capsule deliberately shows only
+ * five grouped categories, so the drawer is where a phone visitor reaches every
+ * section and where the numbering has to line up with the page.
+ *
+ * Bilingual labels are kept local rather than in the data layer: this is
+ * navigation chrome, and it must not drift when content sections are reordered.
  */
-const DRAWER_LABELS: Record<string, { id: string; en: string }> = {
-  about: { id: 'Partner', en: 'Partner' },
-  focus: { id: 'Prinsip', en: 'Principle' },
-  problems: { id: 'Diagnosis', en: 'Diagnosis' },
-  approach: { id: 'Metode', en: 'Method' },
-  manifesto: { id: 'Manifesto', en: 'Manifesto' },
-  solutions: { id: 'Arsitektur', en: 'Architecture' },
-  work: { id: 'Kasus', en: 'Cases' },
-  faq: { id: 'FAQ', en: 'FAQ' },
-  contact: { id: 'Kontak', en: 'Contact' },
-};
+const DRAWER_LINKS: readonly { id: string; labels: { id: string; en: string } }[] = [
+  { id: 'overview', labels: { id: 'Ikhtisar', en: 'Overview' } },
+  { id: 'diagnostics', labels: { id: 'Diagnosis', en: 'Diagnosis' } },
+  { id: 'manifesto', labels: { id: 'Manifesto', en: 'Manifesto' } },
+  { id: 'architecture', labels: { id: 'Arsitektur', en: 'Architecture' } },
+  { id: 'projects', labels: { id: 'Kasus', en: 'Cases' } },
+  { id: 'approach', labels: { id: 'Metode', en: 'Method' } },
+  { id: 'faq', labels: { id: 'FAQ', en: 'FAQ' } },
+  { id: 'contact', labels: { id: 'Kontak', en: 'Contact' } },
+] as const;
 
 function DrawerLinks({ onNavigate }: { onNavigate: () => void }) {
   const active = useScrollSpy(sectionIds);
   const { lang } = useLanguage();
 
+  /*
+   * Close the drawer *before* the scroll runs. `useLockBodyScroll` pins the
+   * body while the drawer is open, and a locked body can swallow the scroll
+   * jump; releasing it first (on the next frame, once React has committed the
+   * closed state) lets `scrollIntoView` actually move the page. `block: start`
+   * honours the `scroll-margin-top` set on `section[id]`, so the heading still
+   * clears the floating capsule.
+   */
+  const handleNavigate = (event: ReactMouseEvent<HTMLAnchorElement>, id: string) => {
+    event.preventDefault();
+    onNavigate();
+    const target = document.getElementById(id);
+    if (!target) return;
+    window.requestAnimationFrame(() =>
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    );
+  };
+
   return (
     <ul>
       {DRAWER_LINKS.map((link, index) => {
-        const label = DRAWER_LABELS[link.id];
         const isActive = active === link.id;
         return (
           <motion.li
@@ -274,12 +282,12 @@ function DrawerLinks({ onNavigate }: { onNavigate: () => void }) {
           >
             <a
               href={`#${link.id}`}
-              onClick={onNavigate}
+              onClick={(event) => handleNavigate(event, link.id)}
               className={`flex min-h-[var(--touch)] items-center justify-between border-b border-[var(--border)] px-4 py-3 font-mono text-[12px] uppercase tracking-[0.08em] transition-colors active:bg-[var(--accent-soft)] ${
                 isActive ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'
               }`}
             >
-              <span className="min-w-0 truncate">{lang === 'en' ? label.en : label.id}</span>
+              <span className="min-w-0 truncate">{lang === 'en' ? link.labels.en : link.labels.id}</span>
               <span className="swiss-index shrink-0 pl-3">{String(index + 1).padStart(2, '0')}</span>
             </a>
           </motion.li>

@@ -4,7 +4,7 @@ import { Minus, Plus } from 'lucide-react';
 import { faqs, sectionIndex } from '../data/companyData';
 import { ui } from '../i18n/ui';
 import { useLanguage } from '../context/LanguageContext';
-import { RevealGroup, RevealItem, Section, EDITORIAL, SPRING_TAP } from './ui';
+import { Reveal, RevealGroup, RevealItem, Section, EDITORIAL, SPRING_TAP } from './ui';
 
 /**
  * `[ A4 // ENGAGEMENT_FAQ ]`
@@ -29,15 +29,35 @@ export default function FAQ() {
       id="faq"
       index={sectionIndex.faq.index}
       label={sectionIndex.faq.label}
-      title={t(ui.faqTitle)}
-      description={t(ui.faqDescription)}
-      headingClassName="grid grid-cols-12 items-end gap-x-gutter gap-y-4"
+      className="w-full min-w-0"
     >
-      <RevealGroup className="mt-fluid-lg grid grid-cols-12 gap-x-gutter gap-y-3">
+      {/*
+        Heading is rendered here rather than through the `Section` title slot.
+
+        The title slot lays its children in a single shared grid, and both the
+        h2 and the paragraph were auto-placed into one 12-column cell each —
+        a heading sitting in a 1/12 track collapses to one glyph per line, which
+        is exactly the vertical rubble this section shipped with. Declaring the
+        column spans explicitly (6 for the title, 5 offset to 7 for the note)
+        gives each block a real measure at `lg` and a clean stack below it.
+      */}
+      <Reveal
+        delay={0.05}
+        className="mt-fluid-md grid w-full min-w-0 grid-cols-1 items-start gap-x-gutter gap-y-4 lg:grid-cols-12"
+      >
+        <h2 className="w-full min-w-0 text-balance text-fluid-5xl font-semibold leading-[0.95] tracking-tight text-[var(--text-primary)] lg:col-span-6">
+          {t(ui.faqTitle)}
+        </h2>
+        <p className="w-full min-w-0 max-w-2xl text-pretty text-fluid-base leading-relaxed text-[var(--text-secondary)] lg:col-span-5 lg:col-start-7">
+          {t(ui.faqDescription)}
+        </p>
+      </Reveal>
+
+      <RevealGroup className="mt-fluid-lg grid w-full min-w-0 grid-cols-12 gap-x-gutter gap-y-3">
         {faqs.map((item, index) => {
           const isOpen = openId === item.id;
           return (
-            <RevealItem key={item.id} className="col-span-12 lg:col-span-6">
+            <RevealItem key={item.id} className="col-span-12 min-w-0 lg:col-span-6">
               <FaqRow
                 number={String(index + 1).padStart(2, '0')}
                 question={t(item.question)}

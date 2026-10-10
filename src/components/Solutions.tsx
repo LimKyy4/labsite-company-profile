@@ -26,7 +26,7 @@ export default function Solutions() {
   const ActiveIcon = active.icon;
 
   return (
-    <section id="solutions" className="surface relative py-section">
+    <section id="architecture" className="surface relative py-section">
       <Hairline className="absolute inset-x-0 top-0" />
 
       <div className="shell">
@@ -116,7 +116,7 @@ export default function Solutions() {
               </RevealGroup>
             ) : (
               <div className="col-span-12">
-                <SnapRail key={active.id} label={t(active.name)}>
+                <SnapRail key={active.id} label={t(active.name)} counterPrefix="NODE">
                   {active.features.map((feature) => (
                     <motion.div
                       key={feature.name.id}

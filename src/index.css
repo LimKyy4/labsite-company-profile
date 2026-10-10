@@ -207,13 +207,13 @@
    * sections, so a new section inherits it instead of forgetting it.
    */
   section[id] {
-    scroll-margin-top: 5.5rem;
+    scroll-margin-top: 7rem;
   }
 
   @media (min-width: 1024px) {
     section[id] {
       /* Desktop nav carries the status strip, so it is meaningfully taller. */
-      scroll-margin-top: 7.5rem;
+      scroll-margin-top: 8rem;
     }
   }
 

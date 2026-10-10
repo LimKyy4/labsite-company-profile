@@ -45,7 +45,7 @@ export default function About() {
           </RevealItem>
         </RevealGroup>
       ) : (
-        <SnapRail label={t(ui.about.railLabel)} className="mt-fluid-lg">
+        <SnapRail label={t(ui.about.railLabel)} counterPrefix="PANEL" className="mt-fluid-lg">
           <div className="rail-slide">
             <PositionCard />
           </div>

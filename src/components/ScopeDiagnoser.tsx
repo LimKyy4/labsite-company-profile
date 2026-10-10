@@ -71,7 +71,7 @@ export default function ScopeDiagnoser() {
               ))}
             </div>
           ) : (
-            <SnapRail label={t(ui.diagnoser.railLabel)} indicator="none" snap={false} className="mt-3">
+            <SnapRail label={t(ui.diagnoser.railLabel)} indicator="bar" counterPrefix="OPTION" snap={false} className="mt-3">
               {diagnosticOptions.map((option) => (
                 <OptionPill
                   key={option.id}
@@ -181,7 +181,7 @@ export default function ScopeDiagnoser() {
             </div>
 
             <a
-              href="#solutions"
+              href="#architecture"
               className="group mt-2 -my-2 inline-flex min-h-[var(--touch)] items-center gap-1.5 py-2 swiss-index swiss-index-strong"
             >
               {t(ui.diagnoser.viewDiagram)}

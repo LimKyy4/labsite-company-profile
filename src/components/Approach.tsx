@@ -52,7 +52,7 @@ export default function Approach() {
       ) : (
         <div className="shell">
           <ApproachHeading />
-          <SnapRail label={t(ui.approach.railLabel)} onActiveChange={setActive} className="mt-fluid-lg">
+          <SnapRail label={t(ui.approach.railLabel)} counterPrefix="STAGE" onActiveChange={setActive} className="mt-fluid-lg">
             {approach.map((stage, index) => (
               <StageCard
                 key={stage.id}

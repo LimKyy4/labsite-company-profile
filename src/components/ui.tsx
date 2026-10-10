@@ -234,6 +234,7 @@ export function SnapRail({
   label,
   indicator = 'bar',
   snap = true,
+  counterPrefix,
   onActiveChange,
   className = '',
 }: {
@@ -243,6 +244,12 @@ export function SnapRail({
   indicator?: 'bar' | 'none';
   /** Off for tab strips, where one-detent-per-flick fights the user. */
   snap?: boolean;
+  /**
+   * Word that names the counter's domain, e.g. `ISSUE` or `STAGE`. Without it
+   * a bare `03 / 07` reads as a page-section number; with it, `ISSUE 03 / 07`
+   * can only mean the third of seven cards in this group.
+   */
+  counterPrefix?: string;
   onActiveChange?: (index: number) => void;
   className?: string;
 }) {
@@ -339,6 +346,9 @@ export function SnapRail({
             />
           </div>
           <span className="swiss-index swiss-index-nowrap tabular pl-1">
+            {counterPrefix ? (
+              <span className="text-[var(--text-muted)]">{counterPrefix} </span>
+            ) : null}
             <span className="text-[var(--text-primary)]">
               {String(active + 1).padStart(2, '0')}
             </span>

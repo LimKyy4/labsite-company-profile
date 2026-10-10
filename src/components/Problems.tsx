@@ -25,7 +25,7 @@ export default function Problems() {
   useEscapeKey(Boolean(active), useCallback(() => setOpenId(null), []));
 
   return (
-    <section id="problems" className="surface relative py-section">
+    <section id="diagnostics" className="surface relative py-section">
       <Hairline className="absolute inset-x-0 top-0" />
 
       <div className="shell">
@@ -67,7 +67,7 @@ export default function Problems() {
       </div>
 
       <div className="shell">
-        <SnapRail label={t(ui.problems.railLabel)} className="mt-fluid-lg">
+        <SnapRail label={t(ui.problems.railLabel)} counterPrefix="ISSUE" className="mt-fluid-lg">
           {problems.map((problem) => (
             <ProblemCard key={problem.id} problem={problem} onOpen={() => setOpenId(problem.id)} />
           ))}

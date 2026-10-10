@@ -18,7 +18,7 @@ export default function Projects() {
   ];
 
   return (
-    <section id="work" className="surface relative py-section">
+    <section id="projects" className="surface relative py-section">
       <Hairline className="absolute inset-x-0 top-0" />
 
       <div className="shell">
